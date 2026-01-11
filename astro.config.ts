@@ -1,17 +1,15 @@
-import { defineConfig, envField } from "astro/config";
-import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
-import remarkToc from "remark-toc";
-import remarkCollapse from "remark-collapse";
 import {
   transformerNotationDiff,
   transformerNotationHighlight,
   transformerNotationWordHighlight,
 } from "@shikijs/transformers";
-import { transformerFileName } from "./src/utils/transformers/fileName";
+import tailwindcss from "@tailwindcss/vite";
+import { defineConfig, envField } from "astro/config";
+import remarkCollapse from "remark-collapse";
+import remarkToc from "remark-toc";
 import { SITE } from "./src/config";
-
-import cloudflare from "@astrojs/cloudflare";
+import { transformerFileName } from "./src/utils/transformers/fileName";
 
 // https://astro.build/config
 export default defineConfig({
@@ -48,6 +46,9 @@ export default defineConfig({
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],
     },
+    ssr: {
+      external: ["@resvg/resvg-js"],
+    },
   },
 
   image: {
@@ -68,6 +69,4 @@ export default defineConfig({
   experimental: {
     preserveScriptOrder: true,
   },
-
-  adapter: cloudflare(),
 });
