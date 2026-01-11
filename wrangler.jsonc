@@ -1,6 +1,6 @@
 {
 	"main": "dist/_worker.js/index.js",
-	"name": "",
+	"name": "dev-wisdom",
   "compatibility_date": "2026-01-11",
   "compatibility_flags": [
     "nodejs_compat",
