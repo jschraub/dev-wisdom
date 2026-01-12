@@ -2,8 +2,8 @@ export const SITE = {
   website: "https://jschraub.com/", // replace this with your deployed domain
   author: "Jared Schraub",
   profile: "https://jschraub.com/",
-  desc: "Blog style write-ups of wisdom gathered as a developer and engineer. ",
-  title: "Dev Wisdom",
+  desc: "A collection of insights on full-stack engineering, technical leadership, and modern web architecture from two decades in big tech and high-frequency finance.",
+  title: "JSchraub",
   ogImage: "astropaper-og.jpg",
   lightAndDarkMode: true,
   postPerIndex: 4,

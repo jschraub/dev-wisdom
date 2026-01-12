@@ -1,37 +1,24 @@
 ---
 layout: ../layouts/AboutLayout.astro
-title: "About"
+title: "About Jared Schraub"
 ---
 
-AstroPaper is a minimal, accessible and SEO-friendly blog theme built with [Astro](https://astro.build/) and [Tailwind CSS](https://tailwindcss.com/).
+> A collection of insights on full-stack engineering, technical leadership, and modern web architecture from two decades in big tech and high-frequency finance.
 
 ![Astro Paper](public/astropaper-og.jpg)
 
-AstroPaper provides a solid foundation for blogs, or even portfolios\_ with full markdown support, built-in dark mode, and a clean layout that works out-of-the-box.
+## About Jared Schraub
 
-The blog posts in this theme also serve as guides, docs or example articles\_ making AstroPaper a flexible starting point for your next content-driven site.
+Hi, I’m Jared. I’ve spent the last two decades building robust software systems, leading engineering teams, and trying to convince computers to do exactly what I want them to do.
 
-## Features
+I am a full-stack engineer and team lead with a career that spans the telecommunications, big tech, and high-frequency finance industries. My path has taken me through **T-Mobile** and **Microsoft**, as well as over five years in the financial sector, primarily at **Citadel**.
 
-AstroPaper comes with a set of useful features that make content publishing easy and effective:
+Throughout my entire career, I have worked across the full stack. I started out with a heavier focus on backend architecture—spending my days in SQL Server and Java EE—but over time, my center of gravity gradually shifted toward the UI. Today, I run a frontend team at a financial market maker, where we leverage TypeScript, React, and C#/.NET to build high-performance applications.
 
-- SEO-friendly
-- Fast performance
-- Light & dark mode
-- Highly customizable
-- Organizable blog posts
-- Responsive & accessible
-- Static search with [PageFind](https://pagefind.app/)
-- Automatic social image generation
+This blog is where I unpack that experience. It’s a place for me to share my opinions on software development, offer advice on technical leadership, and document the things I’ve learned while solving complex problems in demanding environments.
 
-and so much more.
+### My Methodology (and a Note on AI)
 
-## Show your support
+I believe in using the right tool for the job. When it comes to code, that might mean strict typing and functional patterns. When it comes to this website, that means Artificial Intelligence.
 
-If you like [AstroPaper](https://github.com/satnaing/astro-paper), consider giving it a star ⭐️.
-
-Found a bug 🐛 or have an improvement ✨ in mind? Feel free to open an [issue](https://github.com/satnaing/astro-paper/issues), submit a [pull request](https://github.com/satnaing/astro-paper/pulls) or start a [discussion](https://github.com/satnaing/astro-paper/discussions).
-
-If you find this theme helpful, you can also [sponsor me on GitHub](https://github.com/sponsors/satnaing) or [buy me a coffee](https://buymeacoffee.com/satnaing) to show your support — every penny counts.
-
-Kyay zuu! 🙏🏼
+I am an engineer by trade, not a professional writer or a graphic artist. My goal with this site is to express my ideas as clearly and constructively as possible. To achieve that, I use AI tools to help polish my prose and generate the imagery you see here. The technical concepts, the opinions, and the architectural advice are 100% mine—the AI just helps me deliver them to you without the typos.
