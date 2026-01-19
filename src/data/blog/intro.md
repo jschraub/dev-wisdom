@@ -2,10 +2,11 @@
 title: Hello World (And Welcome to the Blog)
 pubDatetime: 2026-01-12T03:43:07Z
 description: I’m kicking things off with a look at my 20-year journey from backend Java to modern frontend leadership, and outlining what you can expect from my posts on engineering, architecture, and career growth.
+ogImage: ../../assets/images/banner-lighthouse.png
 featured: true
 ---
 
-## Hello World (And Welcome to the Blog)
+![Lighthouse banner](@/assets/images/banner-lighthouse.png)
 
 If you’ve been in software as long as I have, you know that the hardest part of any project isn’t the coding—it’s the initial setup. But here we are: the repo is initialized, the build pipeline is passing (mostly), and I’m finally pushing to production.
 

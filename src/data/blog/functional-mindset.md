@@ -2,6 +2,7 @@
 title: "The Functional Mindset: Why Modern React is Forcing Your Hand"
 pubDatetime: 2026-01-17T20:10:00Z
 description: Embracing functional programming principles like purity, immutability, and declarative composition is no longer optional in modern React development, as these concepts provide the predictability and stability required to manage complex application state and build scalable architectures.
+ogImage: ../../assets/images/react-functional-programming-pipeline.png
 tags:
   - React
   - Functional Programming
@@ -19,6 +20,10 @@ tags:
   - Composition
 featured: true
 ---
+
+Embracing functional programming principles like purity, immutability, and declarative composition is no longer optional in modern React development, as these concepts provide the predictability and stability required to manage complex application state and build scalable architectures.
+
+![Functional Programming Pipeline illistrated by map, filter, and reduce](@/assets/images/react-functional-programming-pipeline.png)
 
 If you’ve been in the frontend ecosystem for more than a few years, you remember the "Old World." We built massive controller classes, wrestled with the `this` keyword, and mutated state freely, hoping our watchers would catch the changes.
 

@@ -5,7 +5,7 @@ title: "About Jared Schraub"
 
 > A collection of insights on full-stack engineering, technical leadership, and modern web architecture from two decades in big tech and high-frequency finance.
 
-![Astro Paper](public/astropaper-og.jpg)
+![Lighthouse banner](@/assets/images/banner-lighthouse.png)
 
 ## About Jared Schraub
 
