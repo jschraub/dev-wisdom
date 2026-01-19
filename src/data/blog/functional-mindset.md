@@ -69,7 +69,7 @@ To truly leverage React, we have to embrace three pillars of functional programm
 A pure function is a function that, given the same input, will always return the same output and produces no side effects.
 
 In the context of React, the "input" is your props and state, and the "output" is the JSX (UI).
-\[ UI = f(state) \]
+$UI = f(state)$
 
 When your components are pure, testing becomes trivial. You don't need to mock complex environments; you just pass data in and assert on the render output. If a component relies on a global variable or makes a fetch call directly inside the render body (an impurity), you lose that predictability. This is why React enforces the separation of rendering (pure) and effects (impure) via `useEffect`.
 
@@ -112,7 +112,9 @@ Functional state management (popularized by Redux, but present in Jotai, Zustand
 1.  **State is Read-Only:** You never modify the state directly.
 2.  **Changes are made with Pure Functions (Reducers):** To change state, you dispatch an action. A reducer takes the _current state_ and an _action_, and returns the _new state_.
 
-\[ (CurrentState, Action) \Rightarrow NewState \]
+$$
+(CurrentState, Action) \Rightarrow NewState
+$$
 
 Because the reducer is a pure function, you can mathematically prove the state transition. Given state A and action B, you will _always_ get state C.
 
