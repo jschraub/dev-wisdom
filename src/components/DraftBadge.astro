@@ -1,0 +1,19 @@
+---
+type Props = {
+  class?: string;
+};
+
+const { class: className = "" } = Astro.props;
+---
+
+<span
+  class:list={[
+    "inline-block rounded border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5",
+    "text-xs font-medium tracking-wide text-amber-700 uppercase dark:text-amber-400",
+    className,
+  ]}
+  title="This post is a draft. It is not publicly listed."
+  aria-label="Draft post"
+>
+  Draft
+</span>

@@ -9,7 +9,10 @@ type Props = {
 };
 
 export async function getStaticPaths() {
-  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  // Build a page for every post, including drafts. Drafts are never linked
+  // from listings (see postFilter) and are marked noindex, so the page acts as
+  // an unlisted "secret URL" that can be shared with specific people.
+  const posts = await getCollection("blog");
   const postResult = posts.map(post => ({
     params: { slug: getPath(post.id, post.filePath, false) },
     props: { post },

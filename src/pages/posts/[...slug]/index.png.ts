@@ -9,8 +9,9 @@ export async function getStaticPaths() {
     return [];
   }
 
+  // Include drafts so shared secret links get a proper OG preview image.
   const posts = await getCollection("blog").then(p =>
-    p.filter(({ data }) => !data.draft && !data.ogImage)
+    p.filter(({ data }) => !data.ogImage)
   );
 
   return posts.map(post => ({

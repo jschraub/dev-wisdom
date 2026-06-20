@@ -6,6 +6,7 @@ import Footer from "@/components/Footer.astro";
 import Tag from "@/components/Tag.astro";
 import Datetime from "@/components/Datetime.astro";
 import EditPost from "@/components/EditPost.astro";
+import DraftBadge from "@/components/DraftBadge.astro";
 import ShareLinks from "@/components/ShareLinks.astro";
 import BackButton from "@/components/BackButton.astro";
 import BackToTopButton from "@/components/BackToTopButton.astro";
@@ -33,6 +34,7 @@ const {
   timezone,
   tags,
   hideEditPost,
+  draft,
 } = post.data;
 
 const { Content } = await render(post);
@@ -65,6 +67,7 @@ const layoutProps = {
   canonicalURL,
   ogImage,
   scrollSmooth: true,
+  noindex: !!draft,
 };
 
 /* ========== Prev/Next Posts ========== */
@@ -77,9 +80,13 @@ const allPosts = posts.map(({ data: { title }, id, filePath }) => ({
 
 const currentPostIndex = allPosts.findIndex(a => a.id === post.id);
 
-const prevPost = currentPostIndex !== 0 ? allPosts[currentPostIndex - 1] : null;
+// A draft isn't part of the published list (currentPostIndex === -1 in prod),
+// so it has no prev/next siblings.
+const prevPost = currentPostIndex > 0 ? allPosts[currentPostIndex - 1] : null;
 const nextPost =
-  currentPostIndex !== allPosts.length ? allPosts[currentPostIndex + 1] : null;
+  currentPostIndex !== -1 && currentPostIndex < allPosts.length - 1
+    ? allPosts[currentPostIndex + 1]
+    : null;
 ---
 
 <Layout {...layoutProps}>
@@ -88,7 +95,7 @@ const nextPost =
   <main
     id="main-content"
     class:list={["app-layout pb-12", { "mt-8": !SITE.showBackButton }]}
-    data-pagefind-body
+    data-pagefind-body={draft ? undefined : true}
   >
     <h1
       transition:name={slugifyStr(title)}
@@ -97,6 +104,7 @@ const nextPost =
       {title}
     </h1>
     <div class="my-2 flex items-center gap-2">
+      {draft && <DraftBadge />}
       <Datetime {pubDatetime} {modDatetime} {timezone} size="lg" />
       <span
         aria-hidden="true"
