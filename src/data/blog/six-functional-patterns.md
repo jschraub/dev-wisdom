@@ -1,9 +1,8 @@
 ---
 title: "Six Functional Patterns to Stop Writing Java in JavaScript"
 author: Jared Schraub
-pubDatetime: 2026-06-27T12:00:00Z
+pubDatetime: 2026-06-25T07:00:00Z
 featured: false
-draft: true
 tags:
   - Functional JavaScript
   - TypeScript

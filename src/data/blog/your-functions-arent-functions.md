@@ -3,7 +3,6 @@ title: "Your Functions Aren't Functions: Why JavaScript Punishes Your Java Habit
 author: Jared Schraub
 pubDatetime: 2026-06-20T12:00:00Z
 featured: false
-draft: true
 tags:
   - Functional JavaScript
   - TypeScript
