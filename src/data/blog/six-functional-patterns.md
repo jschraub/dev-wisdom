@@ -9,7 +9,10 @@ tags:
   - JavaScript
   - Functional Programming
 description: "Six concrete moves that turn functional thinking into TypeScript you can ship on Monday — pipelines over loops, expressions over statements, immutable updates, higher-order functions, composition, and closures over classes — refactored on a real orders view."
+ogImage: ../../assets/images/six-functional-patterns-banner.png
 ---
+
+![Six minimalist glyphs for the functional patterns — pipeline, branch, immutability, composition, higher-order, and closure](@/assets/images/six-functional-patterns-banner.png)
 
 In [the last piece](/posts/your-functions-arent-functions) I made a claim that probably sounded like a word game: your functions aren't functions. You write *recipes* — ordered lists of steps that do things — in a language that quietly rewards *equations*, the kind that just declare what a result is. That was the *why*. The trouble with a why is that you finish it nodding, then sit down Monday with the same cursor blinking in the same file and no idea what to actually do differently.
 

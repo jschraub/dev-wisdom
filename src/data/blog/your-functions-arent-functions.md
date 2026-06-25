@@ -9,7 +9,10 @@ tags:
   - JavaScript
   - Functional Programming
 description: "The word 'function' means two different things, and the one you learned in Java is the one TypeScript keeps punishing. A pragmatic case for thinking in equations, not recipes."
+ogImage: ../../assets/images/your-functions-arent-functions-banner.png
 ---
+
+![A tangle of gears resolving into a clean function machine that maps inputs to outputs](@/assets/images/your-functions-arent-functions-banner.png)
 
 I spent a semester in college actively resenting functional programming.
 
