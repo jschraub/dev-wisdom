@@ -8,7 +8,7 @@ The source for [jaredschraub.com](https://jaredschraub.com) — a frontend engin
 
 ```bash
 /
-├── public/             # static assets served as-is (favicon, _redirects, pagefind index)
+├── public/             # static assets served as-is (favicon, pagefind index)
 ├── src/
 │   ├── assets/         # icons & images imported by components
 │   ├── components/
@@ -33,6 +33,8 @@ All blog posts live in `src/data/blog/`. Site-wide branding (title, tagline, des
 **Styling** - [TailwindCSS](https://tailwindcss.com/)
 **Static Search** - [Pagefind](https://pagefind.app/)
 **Deployment** - Static build on [Cloudflare Pages](https://pages.cloudflare.com/)
+
+> The `jschraub.com → jaredschraub.com` canonical 301 is a Cloudflare **Redirect Rule** (zone-level), not a build artifact — Pages `_redirects` can't match on hostname.
 
 ## 👨🏻‍💻 Running Locally
 
