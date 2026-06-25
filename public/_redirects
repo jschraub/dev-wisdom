@@ -1,0 +1,7 @@
+# Canonicalize every legacy / www host onto the apex jaredschraub.com.
+# Cloudflare Pages reads this file from the deploy root automatically.
+# NOTE: every source host below must be attached as a custom domain on the
+# same Pages project, or its requests never reach these rules.
+https://jschraub.com/*          https://jaredschraub.com/:splat   301
+https://www.jschraub.com/*      https://jaredschraub.com/:splat   301
+https://www.jaredschraub.com/*  https://jaredschraub.com/:splat   301

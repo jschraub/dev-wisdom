@@ -84,7 +84,19 @@ export default async () => {
                           {
                             type: "p",
                             props: {
-                              style: { fontSize: 28 },
+                              style: {
+                                fontSize: 36,
+                                fontWeight: "bold",
+                                color: "#006cac",
+                                marginTop: "-8px",
+                              },
+                              children: SITE.tagline,
+                            },
+                          },
+                          {
+                            type: "p",
+                            props: {
+                              style: { fontSize: 26, lineHeight: 1.4 },
                               children: SITE.desc,
                             },
                           },
@@ -122,7 +134,9 @@ export default async () => {
       width: 1200,
       height: 630,
       embedFont: true,
-      fonts: await loadGoogleFonts(SITE.title + SITE.desc + SITE.website),
+      fonts: await loadGoogleFonts(
+        SITE.title + SITE.tagline + SITE.desc + SITE.website
+      ),
     }
   );
 };

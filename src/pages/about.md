@@ -3,7 +3,7 @@ layout: ../layouts/AboutLayout.astro
 title: "About Jared Schraub"
 ---
 
-> A collection of insights on full-stack engineering, technical leadership, and modern web architecture from two decades in big tech and high-frequency finance.
+> Engineering rigor, modernized — a frontend engineering leader bringing two decades of rigor to modern tooling, functional TypeScript, and AI-assisted teams.
 
 ![Lighthouse banner](@/assets/images/banner-lighthouse.png)
 
@@ -17,8 +17,6 @@ Throughout my entire career, I have worked across the full stack. I started out 
 
 This blog is where I unpack that experience. It’s a place for me to share my opinions on software development, offer advice on technical leadership, and document the things I’ve learned while solving complex problems in demanding environments.
 
-### My Methodology (and a Note on AI)
+### A Note on AI (Since I Write About It)
 
-I believe in using the right tool for the job. When it comes to code, that might mean strict typing and functional patterns. When it comes to this website, that means Artificial Intelligence.
-
-I am an engineer by trade, not a professional writer or a graphic artist. My goal with this site is to express my ideas as clearly and constructively as possible. To achieve that, I use AI tools to help polish my prose and generate the imagery you see here. The technical concepts, the opinions, and the architectural advice are 100% mine—the AI just helps me deliver them to you without the typos.
+I write a lot here about adopting AI *without* lowering your engineering standards—so it's only fair to be transparent about how I use it on this site. The prose gets an AI editing pass, and the imagery is AI-generated. But the technical concepts, the opinions, and the architectural calls are 100% mine. The AI is held to the same standard I'd demand on my team: it polishes the delivery, it doesn't make the decisions.

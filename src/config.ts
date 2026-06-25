@@ -1,10 +1,11 @@
 export const SITE = {
-  website: "https://jschraub.com/", // replace this with your deployed domain
+  website: "https://jaredschraub.com/",
   author: "Jared Schraub",
-  profile: "https://jschraub.com/",
-  desc: "A collection of insights on full-stack engineering, technical leadership, and modern web architecture from two decades in big tech and high-frequency finance.",
-  title: "JSchraub",
-  ogImage: "astropaper-og.jpg",
+  profile: "https://jaredschraub.com/",
+  desc: "A frontend engineering leader bringing two decades of rigor to modern tooling — functional TypeScript, AI-assisted teams, and the standards that survive both.",
+  title: "Jared Schraub",
+  tagline: "Engineering rigor, modernized.",
+  ogImage: "", // empty → use the dynamically generated /og.png card
   lightAndDarkMode: true,
   postPerIndex: 4,
   postPerPage: 4,
