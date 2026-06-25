@@ -3,7 +3,7 @@ title: Hello World (And Welcome to the Blog)
 pubDatetime: 2026-01-12T03:43:07Z
 description: I’m kicking things off with a look at my 20-year journey from backend Java to modern frontend leadership, and outlining what you can expect from my posts on engineering, architecture, and career growth.
 ogImage: ../../assets/images/banner-lighthouse.png
-featured: true
+featured: false
 ---
 
 ![Lighthouse banner](@/assets/images/banner-lighthouse.png)
