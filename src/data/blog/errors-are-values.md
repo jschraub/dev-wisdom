@@ -197,7 +197,7 @@ switch (result.error.kind) {
 
 Inside `case "no_inventory"`, TypeScript knows `result.error` has an `available: number`; inside `already_shipped`, it knows there's a `trackingNumber`. Each branch is narrowed to precisely the fields that error carries, and reaching for a field that doesn't belong to this case won't compile.
 
-That little `{ kind: … }` union has a name — a **discriminated union** — and it's one of the most useful tools in TypeScript's whole box. (You've actually been using one this entire time: `Result` itself is a discriminated union, split on `ok`.) It deserves a piece of its own, and it'll get one shortly; for now you only need the shape. Because here's where it stops being a tidy way to model errors and becomes something bigger.
+That little `{ kind: … }` union has a name — a **discriminated union** — and it's one of the most useful tools in TypeScript's whole box. (You've actually been using one this entire time: `Result` itself is a discriminated union, split on `ok`.) It deserves a piece of its own — and [gets one here](/posts/discriminated-unions); for now you only need the shape. Because here's where it stops being a tidy way to model errors and becomes something bigger.
 
 ## Make the illegal states impossible
 
