@@ -279,6 +279,6 @@ switch (result.ok) {
 }
 ```
 
-Same exhaustiveness from the label trick, now load-bearing: the type splits into success and failure, and the compiler won't let you handle one and forget the other. This is the doorway. On its own a `Result` is just a tidy return type — but make every fallible step return one and they start to *chain*: a whole pipeline of things-that-might-fail flowing through without a single `try/catch`. That's the next piece — **Errors Are Values**.
+Same exhaustiveness from the label trick, now load-bearing: the type splits into success and failure, and the compiler won't let you handle one and forget the other. This is the doorway. On its own a `Result` is just a tidy return type — but make every fallible step return one and they start to *chain*: a whole pipeline of things-that-might-fail flowing through without a single `try/catch`. That's the next piece — [**Errors Are Values**](/posts/errors-are-values).
 
 You walked in writing recipes. Six moves later your code describes results, hides nothing, passes functions around like the values they are, and lets its types tell the truth. That's not a tidier way to write Java. It's a different language — the one you were typing all along.

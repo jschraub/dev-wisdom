@@ -68,7 +68,7 @@ Governs every piece.
 - **Examples:** the orders pipeline refactored imperative→functional throughout, shown in a React component where natural (immutable state updates; replacing a class component's `this` with closures/hooks). The `class`/`this` tell (fix #6, closures-over-classes) gets its own before/after.
 - **Level-up close (doorway):** swap a `T | null` return for a `Result` union + exhaustive `switch`; point to #3.
 
-## 3 · Errors Are Values: Functional Error Handling in TypeScript  ✓ drafted (`draft: true`)
+## 3 · Errors Are Values: Functional Error Handling in TypeScript  ✓ published & featured
 *Stage 2 · ~2,800w · failure as types*
 
 - **Opening:** self-contained; callback to #2's `Result` doorway.
@@ -146,9 +146,9 @@ The set is never announced. Instead, links accrete as pieces ship:
 
 **Link map** (added when the *later* piece publishes):
 
-- **Live links** (in the published posts now): #1's close links forward to #2 (`/posts/six-functional-patterns`); #2 opens with a callback link to #1 (`/posts/your-functions-arent-functions`).
-- **#3 (`errors-are-values`) is drafted** (`draft: true`), opening with a backward link to #2. Its into-#1/#2 cross-links are **staged, pending #3's publish** — don't link the live posts at a draft. **Publish checklist for #3:** (a) turn #2's prose "**Errors Are Values**" (last line of its doorway section) into a link → `/posts/errors-are-values`; (b) add one light line in #1's "seventh habit" paragraph → #3.
-- **Primer (`discriminated-unions`) is published & featured.** Inbound: **#3 → primer is wired** (in #3's DU section); **#4 → primer** and **#6 → primer** to add when those ship. #1/#2 deliberately do **not** link it — it's reached via #3. Outbound: none; the primer body is standalone (no series links). Primer is live ahead of #3 (a draft), so the link ordering is clean.
+- **Live links** (published posts): #1 → #2 (close) **and #1 → #3** (seventh-habit paragraph); #2 → #1 (open callback) **and #2 → #3** (doorway, last line); #3 → #2 (open callback) **and #3 → primer** (DU section). The primer is standalone (no outbound series links). **#3 → #4 stays light prose with no link** until #4 ships, then it becomes a link and #4 opens with a backward link to #3.
+- **#3 (`errors-are-values`) is published & featured.** Its backward-link pass is **done**: #2 → #3 and #1 → #3 are live.
+- **Primer (`discriminated-unions`) is published & featured.** Inbound: **#3 → primer is wired** (in #3's DU section); **#4 → primer** and **#6 → primer** to add when those ship. #1/#2 deliberately do **not** link it — it's reached via #3. Outbound: none; the primer body is standalone.
 - **#1** ← everything (the foundational "why"); #8 explicitly closes back to #1's substitution.
 - **#2** → #7 (immutability section → lenses for deep nesting); → #3 (honest-types doorway, already planned).
 - **#3** → #4 (illegal-states → boundary parsing); → #5 (`Result` → effects-as-values parallel); → #8 (testing `Result` pipelines).

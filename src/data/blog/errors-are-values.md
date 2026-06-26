@@ -1,9 +1,8 @@
 ---
 title: "Errors Are Values: Functional Error Handling in TypeScript"
 author: Jared Schraub
-pubDatetime: 2026-06-30T07:00:00Z
-featured: false
-draft: true
+pubDatetime: 2026-06-26T13:00:00Z
+featured: true
 tags:
   - Functional JavaScript
   - TypeScript

@@ -134,7 +134,7 @@ The class makes state-and-behavior a thing you instantiate. The closure keeps th
 
 None of these are exotic. You've written all six this week. They aren't bugs; they're an accent — the imperative language you think in, leaking through into the one you're typing.
 
-There's a seventh habit hiding under all of them: letting your types lie. A recipe hopes nothing goes wrong and patches the gaps with defensive checks — `if (x == null)` scattered everywhere, a `try/catch` quietly doing the job of an `if`. An equation makes the shape of the result honest instead: success or failure, present or absent, written into the type so the compiler holds you to it. That one runs deep enough to earn its own piece down the line — it's where this series is ultimately headed.
+There's a seventh habit hiding under all of them: letting your types lie. A recipe hopes nothing goes wrong and patches the gaps with defensive checks — `if (x == null)` scattered everywhere, a `try/catch` quietly doing the job of an `if`. An equation makes the shape of the result honest instead: success or failure, present or absent, written into the type so the compiler holds you to it. That one runs deep enough to [earn its own piece](/posts/errors-are-values) down the line — it's where this series is ultimately headed.
 
 ## The part school actually had right
 
