@@ -51,7 +51,7 @@ Governs every piece.
 
 ---
 
-## 1 · Your Functions Aren't Functions: Why JavaScript Punishes Your Java Habits  ✓ drafted
+## 1 · Your Functions Aren't Functions: Why JavaScript Punishes Your Java Habits  ✓ published
 *Stage 1 · ~1,500w · the why*
 
 - **Frame:** recipes vs. equations. "Function" is overloaded — the math function declares an equality; the imperative one is a recipe of steps. You write recipes; the language wants equations.
@@ -60,7 +60,7 @@ Governs every piece.
 - **Six tells, clustered:** describe-what-not-how (pipelines, expressions, composition) · stop hiding state (immutability) · functions are values (HOFs) · reach for a closure, not a class (closures-over-classes). These are the same six #2 fixes. Plus a **"seventh habit" doorway** — make the types tell the truth (→ #3) — mirrored by #2's "seventh move."
 - **Examples:** a punchy "you've written this" snippet per tell, React-flavored where it fits; `f(x)=x²+1` only at the reframe beat.
 
-## 2 · Six Functional Patterns to Stop Writing Java in JavaScript  ✓ drafted
+## 2 · Six Functional Patterns to Stop Writing Java in JavaScript  ✓ published
 *Stage 1 · ~2,500w · the how*
 
 - **Opening:** self-contained, one-line callback to #1.
@@ -68,7 +68,7 @@ Governs every piece.
 - **Examples:** the orders pipeline refactored imperative→functional throughout, shown in a React component where natural (immutable state updates; replacing a class component's `this` with closures/hooks). The `class`/`this` tell (fix #6, closures-over-classes) gets its own before/after.
 - **Level-up close (doorway):** swap a `T | null` return for a `Result` union + exhaustive `switch`; point to #3.
 
-## 3 · Errors Are Values: Functional Error Handling in TypeScript  ✓ spec'd
+## 3 · Errors Are Values: Functional Error Handling in TypeScript  ✓ drafted (`draft: true`)
 *Stage 2 · ~2,800w · failure as types*
 
 - **Opening:** self-contained; callback to #2's `Result` doorway.
@@ -146,7 +146,8 @@ The set is never announced. Instead, links accrete as pieces ship:
 
 **Link map** (added when the *later* piece publishes):
 
-- **Live links** (in the drafts now): #1's close links forward to #2 (`/posts/six-functional-patterns`); #2 opens with a callback link to #1 (`/posts/your-functions-arent-functions`). #2's `Result` doorway names #3 in prose — turn it into a link when #3 ships.
+- **Live links** (in the published posts now): #1's close links forward to #2 (`/posts/six-functional-patterns`); #2 opens with a callback link to #1 (`/posts/your-functions-arent-functions`).
+- **#3 (`errors-are-values`) is drafted** (`draft: true`), opening with a backward link to #2. Its into-#1/#2 cross-links are **staged, pending #3's publish** — don't link the live posts at a draft. **Publish checklist for #3:** (a) turn #2's prose "**Errors Are Values**" (last line of its doorway section) into a link → `/posts/errors-are-values`; (b) add one light line in #1's "seventh habit" paragraph → #3. The in-#3 forward-nod to the discriminated-unions primer stays prose until that primer ships, then becomes a link.
 - **#1** ← everything (the foundational "why"); #8 explicitly closes back to #1's substitution.
 - **#2** → #7 (immutability section → lenses for deep nesting); → #3 (honest-types doorway, already planned).
 - **#3** → #4 (illegal-states → boundary parsing); → #5 (`Result` → effects-as-values parallel); → #8 (testing `Result` pipelines).
@@ -155,6 +156,12 @@ The set is never announced. Instead, links accrete as pieces ship:
 - **#6** → #8 (pure reducers → property tests).
 - **#7** ← #2, #3.
 - **#8** ← #1, #3, #4, #5, #6 (the payoff links back broadly).
+
+## Supporting posts (outside the eight)
+
+Standalone, tag-mates that *support* the arc without being numbered members of it. Same voice, same banner treatment; they exist to be the "go deeper" target the main pieces link to.
+
+- **Discriminated Unions (TypeScript primer)** — `← to write, slated right after #3`. The shared dependency under #3 (`Result`, the `ShipError` union, illegal-states `Order`), #4 (parsed types), and #6 (events). #3 teaches just-enough DU inline and carries one light forward-nod ("deserves a piece of its own"); this primer is that piece. Scope ~1,500–1,800w: the discriminant convention, exhaustiveness with `never`/`assertNever`, narrowing, why a DU beats `enum` + optional fields, modeling state machines. Stands fully alone (its own recognition hook), so the main pieces link *to* it; it need not reference them. When it ships, turn the #3 forward-nod into a link.
 
 ## Commitment note
 

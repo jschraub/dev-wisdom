@@ -9,11 +9,14 @@ alt: Data flowing through a pipeline of lenses — pure functions composing into
 
 Prompt used to generate `functional-mindset-banner.png`.
 
-Part of a cohesive three-banner set for the Functional JavaScript series — deep
-professional blue (`#006cac`), blueprint-grid aesthetic, "engineering rigor,
-modernized." Sister banners:
-[`your-functions-arent-functions-banner`](./your-functions-arent-functions-banner.prompt.md) ·
-[`six-functional-patterns-banner`](./six-functional-patterns-banner.prompt.md).
+Shares the blueprint visual language of the Functional JavaScript series'
+**8-banner set** — deep professional blue (`#006cac`), blueprint-grid aesthetic,
+"engineering rigor, modernized" — but "The Functional Mindset" predates the
+series and is **not** one of the eight; it's the stylistic forerunner the set was
+later unified with. Series banners:
+[`your-functions-arent-functions-banner`](./your-functions-arent-functions-banner.prompt.md) (#1) ·
+[`six-functional-patterns-banner`](./six-functional-patterns-banner.prompt.md) (#2) ·
+[`errors-are-values-banner`](./errors-are-values-banner.prompt.md) (#3).
 
 Settings: 16:9 widescreen (doubles as the social/OG card). "No text" is
 deliberate — generators garble lettering and the site renders the title itself.

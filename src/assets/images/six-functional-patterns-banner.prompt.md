@@ -9,11 +9,15 @@ alt: Six minimalist glyphs for the functional patterns — pipeline, branch, imm
 
 Prompt used to generate `six-functional-patterns-banner.png`.
 
-Part of a cohesive three-banner set for the Functional JavaScript series — deep
-professional blue (`#006cac`), blueprint-grid aesthetic, "engineering rigor,
-modernized." Sister banners:
-[`functional-mindset-banner`](./functional-mindset-banner.prompt.md) ·
-[`your-functions-arent-functions-banner`](./your-functions-arent-functions-banner.prompt.md).
+Part of a cohesive **8-banner set** for the Functional JavaScript series — one
+banner per piece, in deep professional blue (`#006cac`), blueprint-grid
+aesthetic, "engineering rigor, modernized." The set accretes as the series ships.
+Live so far:
+[`your-functions-arent-functions-banner`](./your-functions-arent-functions-banner.prompt.md) (#1) ·
+[`six-functional-patterns-banner`](./six-functional-patterns-banner.prompt.md) (#2, this one) ·
+[`errors-are-values-banner`](./errors-are-values-banner.prompt.md) (#3).
+[`functional-mindset-banner`](./functional-mindset-banner.prompt.md) shares the
+visual language but predates the series and is not one of the eight.
 
 Settings: 16:9 widescreen (doubles as the social/OG card). "No text" is
 deliberate — generators garble lettering and the site renders the title itself.
