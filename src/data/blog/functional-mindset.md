@@ -18,7 +18,7 @@ tags:
   - Redux
   - Pure Functions
   - Composition
-featured: true
+featured: false
 ---
 
 Embracing functional programming principles like purity, immutability, and declarative composition is no longer optional in modern React development, as these concepts provide the predictability and stability required to manage complex application state and build scalable architectures.
