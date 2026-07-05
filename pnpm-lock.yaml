@@ -17,6 +17,9 @@ importers:
       '@astrojs/sitemap':
         specifier: ^3.7.3
         version: 3.7.3
+      '@nullpinter/satteri-katex':
+        specifier: ^0.1.2
+        version: 0.1.2(satteri@0.9.4)
       '@resvg/resvg-js':
         specifier: ^2.6.2
         version: 2.6.2
@@ -846,6 +849,11 @@ packages:
 
   '@nodable/entities@2.2.0':
     resolution: {integrity: sha512-9uGyhaQavEUMC8AIddIjau4NsnsXhou+j5sBAGojCM1oxmQpVKTWR/9JxABD6UAv12vpIms55fPZKFQEhG6uBg==}
+
+  '@nullpinter/satteri-katex@0.1.2':
+    resolution: {integrity: sha512-EGFGDysz/UrjyWyPD/CrrBUJQ9iruK4nP4YfcmAA5KHeyiupY15aLxMgydcSriN7fLbsE+dMrMkdpZ7rtQRGfw==}
+    peerDependencies:
+      satteri: ^0.8.1
 
   '@oslojs/encoding@1.1.0':
     resolution: {integrity: sha512-70wQhgYmndg4GCPxPPxPGevRKqTIJ2Nh4OkiMWmDAVYsTQ+Ta7Sq+rPevXyXGdzr30/qZBnyOalCszoMxlyldQ==}
@@ -3374,6 +3382,11 @@ snapshots:
     optional: true
 
   '@nodable/entities@2.2.0': {}
+
+  '@nullpinter/satteri-katex@0.1.2(satteri@0.9.4)':
+    dependencies:
+      katex: 0.17.0
+      satteri: 0.9.4
 
   '@oslojs/encoding@1.1.0': {}
 

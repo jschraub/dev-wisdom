@@ -27,21 +27,26 @@ did here:
 - Shiki + `@shikijs/transformers` (incl. the local `transformerFileName`):
   fully supported under Sätteri — `shikiConfig` feeds its highlighter directly.
 
-The only ecosystem KaTeX plugin for Sätteri (`@nullpinter/satteri-katex` 0.1.2)
-self-describes as a scaffold, so I wrote a local one instead:
-`src/utils/satteriKatex.ts` — an mdast plugin that replaces `inlineMath`/`math`
-nodes with `katex.renderToString(...)` output via Sätteri's `rawHtml` escape
-hatch (~25 lines).
+For KaTeX rendering I initially wrote a local ~25-line mdast plugin
+(`src/utils/satteriKatex.ts`), because the only ecosystem option
+(`@nullpinter/satteri-katex`) self-described as a "scaffold". On actually
+reading its source, it is the same architecture with *better* engineering:
+strict-first rendering with build diagnostics via `ctx.report`, a lenient
+fallback, an escaped error span as last resort, and KaTeX options
+pass-through. MPL-2.0, peer-depends on `satteri ^0.8`, depends on
+`katex ^0.17` — all aligned. I swapped to it (same day) and deleted the local
+plugin; its output was **byte-identical across the whole site**.
 
 ## Decision
 
 - `markdown.processor: satteri({ features: { math: true }, mdastPlugins:
-  [satteriKatex] })` in `astro.config.ts`.
+  [katex()] })` in `astro.config.ts`, with `katex` from
+  `@nullpinter/satteri-katex`.
 - Remove `@astrojs/markdown-remark`, `remark-math`, `remark-toc`,
   `remark-collapse`, `rehype-katex`, and the `remark-collapse.d.ts` shim.
 - Add `@astrojs/markdown-satteri` (the `satteri()` factory) and `satteri`
-  (plugin types + `defineMdastPlugin`) as direct dependencies, version-aligned
-  with what Astro 7 ships.
+  (satisfies the plugin's peer dependency, version-aligned with what Astro 7
+  ships) as direct dependencies.
 - Bump `katex` 0.16 → 0.17. This was previously held back because
   `rehype-katex` rendered with its own bundled katex 0.16 while the top-level
   dep only supplied the stylesheet; rendering math myself removes the split —
@@ -61,15 +66,19 @@ Positive:
 Negative / accepted trade-offs:
 
 - Sätteri is pre-1.0 (0.9.x, released with Astro 7 in June 2026); its plugin
-  API may shift across minor versions. The local plugin is small enough to
-  update easily.
-- `satteriKatex` is mine to maintain. If an official/community KaTeX plugin
-  matures, consider replacing it.
+  API may shift across minor versions.
+- `@nullpinter/satteri-katex` is 0.1.x with a single maintainer. Accepted: the
+  entire plugin is ~50 lines against a stable contract, and the fallback is
+  trivial — an mdast plugin with `math`/`inlineMath` visitors returning
+  `{ rawHtml: katex.renderToString(node.value, { displayMode, throwOnError:
+  false }) }` (the deleted `src/utils/satteriKatex.ts`, recoverable from git
+  history at commit 3637e63).
 - Display math now renders wrapped in `<p>` (valid; `katex-display` CSS still
   renders it as a block). Cosmetic-only difference from rehype-katex output.
 
 ## Revisit trigger
 
-- Sätteri 1.0 / plugin-API changes: re-check `satteriKatex` against the
-  `MdastPluginDefinition` contract on Astro upgrades.
-- An established Sätteri KaTeX plugin appearing in the ecosystem.
+- Sätteri 1.0 / plugin-API changes on Astro upgrades.
+- `@nullpinter/satteri-katex` going unmaintained or drifting from the satteri
+  peer range → restore the local plugin from git history (see above).
+- An official Sätteri/Astro KaTeX plugin appearing.

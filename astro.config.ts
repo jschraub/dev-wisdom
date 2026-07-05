@@ -1,6 +1,7 @@
 import { type Dirent, readdirSync, readFileSync } from "node:fs";
 import { satteri } from "@astrojs/markdown-satteri";
 import sitemap from "@astrojs/sitemap";
+import { katex } from "@nullpinter/satteri-katex";
 import {
 	transformerNotationDiff,
 	transformerNotationHighlight,
@@ -9,7 +10,6 @@ import {
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, envField } from "astro/config";
 import { SITE } from "./src/config";
-import { satteriKatex } from "./src/utils/satteriKatex";
 import { slugifyStr } from "./src/utils/slugify";
 import { transformerFileName } from "./src/utils/transformers/fileName";
 
@@ -95,11 +95,11 @@ export default defineConfig({
 
 	markdown: {
 		// Astro 7's native Sätteri pipeline (the default processor), configured
-		// explicitly to parse `$…$` / `$$…$$` math; satteriKatex renders those
-		// nodes to KaTeX HTML at build time. See docs/adr/0002.
+		// explicitly to parse `$…$` / `$$…$$` math; the katex plugin renders
+		// those nodes to KaTeX HTML at build time. See docs/adr/0002.
 		processor: satteri({
 			features: { math: true },
-			mdastPlugins: [satteriKatex],
+			mdastPlugins: [katex()],
 		}),
 		shikiConfig: {
 			// For more themes, visit https://shiki.style/themes
