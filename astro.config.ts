@@ -1,5 +1,5 @@
 import { type Dirent, readdirSync, readFileSync } from "node:fs";
-import { unified } from "@astrojs/markdown-remark";
+import { satteri } from "@astrojs/markdown-satteri";
 import sitemap from "@astrojs/sitemap";
 import {
   transformerNotationDiff,
@@ -8,11 +8,8 @@ import {
 } from "@shikijs/transformers";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, envField } from "astro/config";
-import rehypeKatex from "rehype-katex";
-import remarkCollapse from "remark-collapse";
-import remarkMath from "remark-math";
-import remarkToc from "remark-toc";
 import { SITE } from "./src/config";
+import { satteriKatex } from "./src/utils/satteriKatex";
 import { slugifyStr } from "./src/utils/slugify";
 import { transformerFileName } from "./src/utils/transformers/fileName";
 
@@ -97,16 +94,12 @@ export default defineConfig({
   ],
 
   markdown: {
-    // Astro 7 made the Rust-based "Sätteri" pipeline the default Markdown
-    // processor. Stay on the unified (remark/rehype) pipeline — this blog
-    // depends on remark-toc/remark-collapse/remark-math + rehype-katex.
-    processor: unified({
-      remarkPlugins: [
-        remarkToc,
-        [remarkCollapse, { test: "Table of contents" }],
-        remarkMath,
-      ],
-      rehypePlugins: [rehypeKatex],
+    // Astro 7's native Sätteri pipeline (the default processor), configured
+    // explicitly to parse `$…$` / `$$…$$` math; satteriKatex renders those
+    // nodes to KaTeX HTML at build time. See docs/adr/0002.
+    processor: satteri({
+      features: { math: true },
+      mdastPlugins: [satteriKatex],
     }),
     shikiConfig: {
       // For more themes, visit https://shiki.style/themes
