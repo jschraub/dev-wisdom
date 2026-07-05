@@ -1,20 +1,20 @@
 ---
-import { render, type CollectionEntry } from "astro:content";
-import Layout from "@/layouts/Layout.astro";
-import Header from "@/components/Header.astro";
-import Footer from "@/components/Footer.astro";
-import Tag from "@/components/Tag.astro";
-import Datetime from "@/components/Datetime.astro";
-import EditPost from "@/components/EditPost.astro";
-import DraftBadge from "@/components/DraftBadge.astro";
-import ShareLinks from "@/components/ShareLinks.astro";
-import BackButton from "@/components/BackButton.astro";
-import BackToTopButton from "@/components/BackToTopButton.astro";
-import { getPath } from "@/utils/getPath";
-import { slugifyStr } from "@/utils/slugify";
+import { type CollectionEntry, render } from "astro:content";
 import IconChevronLeft from "@/assets/icons/IconChevronLeft.svg";
 import IconChevronRight from "@/assets/icons/IconChevronRight.svg";
+import BackButton from "@/components/BackButton.astro";
+import BackToTopButton from "@/components/BackToTopButton.astro";
+import Datetime from "@/components/Datetime.astro";
+import DraftBadge from "@/components/DraftBadge.astro";
+import EditPost from "@/components/EditPost.astro";
+import Footer from "@/components/Footer.astro";
+import Header from "@/components/Header.astro";
+import ShareLinks from "@/components/ShareLinks.astro";
+import Tag from "@/components/Tag.astro";
 import { SITE } from "@/config";
+import Layout from "@/layouts/Layout.astro";
+import { getPath } from "@/utils/getPath";
+import { slugifyStr } from "@/utils/slugify";
 
 type Props = {
   post: CollectionEntry<"blog">;

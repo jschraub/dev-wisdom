@@ -68,3 +68,19 @@ html[data-theme="dark"] {
 :target {
   scroll-margin-block: 1rem;
 }
+
+/* Astro 7 quirk: pages whose responsive images come from the legacy unified()
+   Markdown pipeline (markdown.processor in astro.config.ts) don't get Astro's
+   auto-injected responsive-image styles — only pages using the <Image>
+   component do. Replicate the essential rules here so Markdown post images
+   keep identical rendering. Drop this if/when the injection covers the
+   unified pipeline upstream. */
+:where([data-astro-image]) {
+  height: auto;
+}
+:where([data-astro-image="full-width"]) {
+  width: 100%;
+}
+:where([data-astro-image="constrained"]) {
+  max-width: 100%;
+}

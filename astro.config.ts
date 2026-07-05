@@ -1,4 +1,5 @@
 import { type Dirent, readdirSync, readFileSync } from "node:fs";
+import { unified } from "@astrojs/markdown-remark";
 import sitemap from "@astrojs/sitemap";
 import {
   transformerNotationDiff,
@@ -82,6 +83,12 @@ function isDraftUrl(page: string): boolean {
 export default defineConfig({
   site: SITE.website,
 
+  // Astro 7 changed the default to "jsx" (JSX whitespace rules), which strips
+  // whitespace between inline elements — templates here were written under
+  // HTML rules ("a single space between inline elements is preserved").
+  // Keep the pre-v7 behavior; revisit if templates are ever JSX-normalized.
+  compressHTML: true,
+
   integrations: [
     sitemap({
       filter: page =>
@@ -90,12 +97,17 @@ export default defineConfig({
   ],
 
   markdown: {
-    remarkPlugins: [
-      remarkToc,
-      [remarkCollapse, { test: "Table of contents" }],
-      remarkMath,
-    ],
-    rehypePlugins: [rehypeKatex],
+    // Astro 7 made the Rust-based "Sätteri" pipeline the default Markdown
+    // processor. Stay on the unified (remark/rehype) pipeline — this blog
+    // depends on remark-toc/remark-collapse/remark-math + rehype-katex.
+    processor: unified({
+      remarkPlugins: [
+        remarkToc,
+        [remarkCollapse, { test: "Table of contents" }],
+        remarkMath,
+      ],
+      rehypePlugins: [rehypeKatex],
+    }),
     shikiConfig: {
       // For more themes, visit https://shiki.style/themes
       themes: { light: "min-light", dark: "night-owl" },
@@ -133,9 +145,5 @@ export default defineConfig({
         optional: true,
       }),
     },
-  },
-
-  experimental: {
-    preserveScriptOrder: true,
   },
 });
