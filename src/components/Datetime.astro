@@ -3,19 +3,19 @@ import IconCalendar from "@/assets/icons/IconCalendar.svg";
 import { SITE } from "@/config";
 
 type Props = {
-  class?: string;
-  size?: "sm" | "lg";
-  pubDatetime: string | Date;
-  timezone?: string;
-  modDatetime?: string | Date | null;
+	class?: string;
+	size?: "sm" | "lg";
+	pubDatetime: string | Date;
+	timezone?: string;
+	modDatetime?: string | Date | null;
 };
 
 const {
-  pubDatetime,
-  modDatetime,
-  size = "sm",
-  class: className = "",
-  timezone: postTimezone,
+	pubDatetime,
+	modDatetime,
+	size = "sm",
+	class: className = "",
+	timezone: postTimezone,
 } = Astro.props;
 
 /* ========== Formatted Datetime ========== */
@@ -26,13 +26,13 @@ const datetime = new Date(isModified ? modDatetime : pubDatetime);
 // e.g., '22 Mar, 2025' in the post's (or site's) IANA timezone — the same
 // "D MMM, YYYY" rendering this component produced with dayjs.
 const parts = new Intl.DateTimeFormat("en-US", {
-  timeZone: postTimezone || SITE.timezone,
-  day: "numeric",
-  month: "short",
-  year: "numeric",
+	timeZone: postTimezone || SITE.timezone,
+	day: "numeric",
+	month: "short",
+	year: "numeric",
 }).formatToParts(datetime);
 const part = (type: Intl.DateTimeFormatPartTypes) =>
-  parts.find(p => p.type === type)?.value ?? "";
+	parts.find((p) => p.type === type)?.value ?? "";
 const date = `${part("day")} ${part("month")}, ${part("year")}`;
 ---
 

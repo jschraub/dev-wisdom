@@ -33,14 +33,24 @@ Use Biome in **code-only mode** for `.astro` files
 (`html.experimentalFullSupportEnabled: false`, the default):
 
 - Biome formats and lints the **JS/TS in `.astro` frontmatter and `<script>`
-  blocks**, plus all `.ts` / `.css` / `.json`.
+  blocks**, plus all `.ts` / `.css` / `.json`, and (with the HTML-family
+  formatter opted in) `.svg` assets.
 - Biome **does not reformat `.astro` template markup**. It is left as-authored.
-- Because Biome cannot see template usage in code-only mode, `noUnusedImports`
-  and `noUnusedVariables` are **disabled for `.astro`** via an `overrides` entry
-  (they would otherwise flag every component/variable used only in markup).
-  `astro check` remains the source of truth for genuinely unused symbols.
+- Because Biome cannot see template usage in code-only mode, the
+  community-standard `.astro` override
+  ([astro-tips.dev/tips/biome](https://astro-tips.dev/tips/biome/)) disables
+  `noUnusedImports`, `noUnusedVariables`, `useConst`, and `useImportType` for
+  `.astro` files. `astro check` remains the source of truth for those.
 
 Prettier and all its plugins are removed.
+
+**Revised same day — standard configuration:** rather than porting the old
+Prettier/ESLint settings forward, the config now runs on **stock Biome
+defaults** (tab indentation, 80 columns, double quotes, trailing commas
+everywhere, arrow parens always). The only deliberate additions are
+`noConsole: "error"`, the `useSortedClasses` nursery assist, the Tailwind CSS
+parser flag, and an override disabling `noSvgWithoutTitle` for `.svg` assets
+(they're decorative icon sources; alt text lives at the usage sites).
 
 ## Consequences
 

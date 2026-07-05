@@ -9,18 +9,18 @@ import { defineMdastPlugin } from "satteri";
  * output, paired with the `katex` stylesheet imported in `global.css`.
  */
 export const satteriKatex = defineMdastPlugin({
-  name: "katex",
-  inlineMath(node, ctx) {
-    ctx.replaceNode(node, {
-      rawHtml: katex.renderToString(node.value, { throwOnError: false }),
-    });
-  },
-  math(node, ctx) {
-    ctx.replaceNode(node, {
-      rawHtml: katex.renderToString(node.value, {
-        displayMode: true,
-        throwOnError: false,
-      }),
-    });
-  },
+	name: "katex",
+	inlineMath(node, ctx) {
+		ctx.replaceNode(node, {
+			rawHtml: katex.renderToString(node.value, { throwOnError: false }),
+		});
+	},
+	math(node, ctx) {
+		ctx.replaceNode(node, {
+			rawHtml: katex.renderToString(node.value, {
+				displayMode: true,
+				throwOnError: false,
+			}),
+		});
+	},
 });

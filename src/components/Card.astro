@@ -6,7 +6,7 @@ import Datetime from "./Datetime.astro";
 import DraftBadge from "./DraftBadge.astro";
 
 type Props = {
-  variant?: "h2" | "h3";
+	variant?: "h2" | "h3";
 } & CollectionEntry<"blog">;
 
 const { variant: Heading = "h2", id, data, filePath } = Astro.props;
