@@ -10,6 +10,7 @@ import {
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig, envField, fontProviders } from "astro/config";
 import { SITE } from "./src/config";
+import { proofDark, proofLight } from "./src/utils/shikiThemes";
 import { slugifyStr } from "./src/utils/slugify";
 import { transformerFileName } from "./src/utils/transformers/fileName";
 
@@ -96,8 +97,8 @@ export default defineConfig({
 			mdastPlugins: [katex()],
 		}),
 		shikiConfig: {
-			// For more themes, visit https://shiki.style/themes
-			themes: { light: "min-light", dark: "night-owl" },
+			// Custom pair on the proof-green ramps — see src/utils/shikiThemes.ts
+			themes: { light: proofLight, dark: proofDark },
 			defaultColor: false,
 			wrap: false,
 			transformers: [

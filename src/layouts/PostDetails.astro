@@ -256,7 +256,7 @@ const nextPost =
         : "-top-3";
 
       const copyButton = document.createElement("button");
-      copyButton.className = `copy-code absolute end-3 ${topClass} rounded bg-muted border border-muted px-2 py-1 text-xs leading-4 text-foreground font-medium`;
+      copyButton.className = `copy-code absolute end-3 ${topClass} rounded-md border border-border bg-background/90 px-2 py-1 text-xs leading-4 font-medium text-muted-foreground backdrop-blur-sm hover:border-accent hover:text-accent`;
       copyButton.innerHTML = copyButtonLabel;
       codeBlock.setAttribute("tabindex", "0");
       codeBlock.appendChild(copyButton);
@@ -278,9 +278,11 @@ const nextPost =
 
       // visual feedback that task is completed
       button.innerText = "Copied";
+      button.classList.add("border-accent", "text-accent");
 
       setTimeout(() => {
         button.innerText = copyButtonLabel;
+        button.classList.remove("border-accent", "text-accent");
       }, 700);
     }
   }

@@ -112,28 +112,33 @@
 	}
 
 	/* ===== Code Blocks & Syntax Highlighting ===== */
+	/* Background pinned to the panel token (not Shiki's bg vars) so code
+	   blocks track the design system by construction. */
 	.astro-code {
-		@apply flex border bg-(--shiki-light-bg) text-(--shiki-light) outline-border [&_span]:text-(--shiki-light);
+		@apply flex border bg-muted text-(--shiki-light) outline-border [&_span]:text-(--shiki-light);
 	}
 
 	html[data-theme="dark"] .astro-code {
-		@apply bg-(--shiki-dark-bg) text-(--shiki-dark) [&_span]:text-(--shiki-dark);
+		@apply text-(--shiki-dark) [&_span]:text-(--shiki-dark);
 	}
 
 	/* Styles for Shiki transformers */
 	/* https://shiki.style/packages/transformers */
 	.astro-code {
+		/* Diff semantics stay pure green/red (yellower and more saturated than
+		   the jade accent, plus the full-width tint and +/- marker). */
 		.line.diff.add {
-			@apply relative inline-block w-full bg-green-400/20 before:absolute before:-left-3 before:text-green-500 before:content-['+'];
+			@apply relative inline-block w-full bg-green-500/15 before:absolute before:-left-3 before:text-green-600 dark:before:text-green-400 before:content-['+'];
 		}
 		.line.diff.remove {
-			@apply relative inline-block w-full bg-red-500/20 before:absolute before:-left-3 before:text-red-500 before:content-['-'];
+			@apply relative inline-block w-full bg-red-500/15 before:absolute before:-left-3 before:text-red-500 before:content-['-'];
 		}
+		/* Highlights are gold — same job as <mark> in prose (docs/adr/0003). */
 		.line.highlighted {
-			@apply inline-block w-full bg-slate-400/20;
+			@apply inline-block w-full bg-gold/15;
 		}
 		.highlighted-word {
-			@apply rounded-sm border border-border px-0.5 py-px;
+			@apply rounded-sm border border-gold/45 bg-gold/10 px-0.5 py-px;
 		}
 	}
 }
