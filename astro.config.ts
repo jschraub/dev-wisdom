@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { type Dirent, readdirSync, readFileSync } from "node:fs";
 import sitemap from "@astrojs/sitemap";
 import {
   transformerNotationDiff,
@@ -20,7 +20,7 @@ const BLOG_DIR = "src/data/blog";
 /** Recursively collect markdown file paths relative to `base`. */
 function walkMarkdown(dir: string, base: string): string[] {
   const out: string[] = [];
-  let entries;
+  let entries: Dirent[];
   try {
     entries = readdirSync(dir, { withFileTypes: true });
   } catch {
@@ -50,7 +50,7 @@ function getDraftUrlPaths(): Set<string> {
     if (!frontmatter || !/^draft:\s*true\s*$/m.test(frontmatter[1])) continue;
 
     const segments = rel.split("/");
-    const fileName = segments.pop()!.replace(/\.md$/, "");
+    const fileName = (segments.pop() ?? "").replace(/\.md$/, "");
     // A `slug:` frontmatter field overrides the filename as the post id/URL.
     const slugMatch = frontmatter[1].match(/^slug:\s*["']?(.+?)["']?\s*$/m);
     const slug = slugifyStr(slugMatch ? slugMatch[1] : fileName);
@@ -111,10 +111,6 @@ export default defineConfig({
   },
 
   vite: {
-    // eslint-disable-next-line
-    // @ts-ignore
-    // This will be fixed in Astro 6 with Vite 7 support
-    // See: https://github.com/withastro/astro/issues/14030
     plugins: [tailwindcss()],
     optimizeDeps: {
       exclude: ["@resvg/resvg-js"],

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.2/schema.json",
+  // Respect .gitignore (covers dist/, .astro/, node_modules/, public/pagefind)
+  // — this replaces the old eslint `ignores` list.
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    "ignoreUnknown": true,
+    // Don't let the HTML formatter reformat SVG assets (Prettier never did).
+    "includes": ["**", "!**/*.svg"]
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 80,
+    "lineEnding": "lf"
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      // Was eslint `no-console: "error"`.
+      "suspicious": {
+        "noConsole": "error"
+      },
+      // Tailwind class sorting for JS/TS `class`/`className` string literals
+      // (partial replacement for prettier-plugin-tailwindcss). Note: in
+      // code-only .astro mode this does NOT reach classes in .astro template
+      // markup — that sorting is lost until full Astro support is re-enabled.
+      "nursery": {
+        "useSortedClasses": {
+          "level": "warn",
+          "options": {
+            "attributes": ["class:list"]
+          }
+        }
+      }
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "jsxQuoteStyle": "double",
+      "semicolons": "always",
+      "arrowParentheses": "asNeeded",
+      "trailingCommas": "es5",
+      "bracketSpacing": true
+    }
+  },
+  "css": {
+    // Understand Tailwind at-rules (@apply, @tailwind, @variant, …) in
+    // src/styles/*.css instead of erroring on them.
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
+  // .astro handling is "code-only": Biome formats/lints the JS/TS in the
+  // frontmatter and <script> blocks, but does NOT reformat template markup.
+  // Full template formatting (experimentalFullSupportEnabled) is intentionally
+  // OFF — as of Biome 2.5 its experimental Astro parser can't handle `{/* */}`
+  // JSX comments, which several .astro files use. Revisit when it matures.
+  "html": {
+    "experimentalFullSupportEnabled": false
+  },
+  "overrides": [
+    {
+      // Biome parses .astro frontmatter but NOT the template markup, so it
+      // can't see components/variables referenced only in markup — these two
+      // rules would fire on nearly every .astro file (false positives).
+      // `astro check` / the Astro language server catch genuinely unused
+      // symbols. Remove this override if full Astro support is re-enabled.
+      "includes": ["**/*.astro"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off",
+            "noUnusedVariables": "off"
+          }
+        }
+      }
+    }
+  ]
+}
