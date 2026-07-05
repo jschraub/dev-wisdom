@@ -80,12 +80,6 @@ function isDraftUrl(page: string): boolean {
 export default defineConfig({
 	site: SITE.website,
 
-	// Astro 7 changed the default to "jsx" (JSX whitespace rules), which strips
-	// whitespace between inline elements — templates here were written under
-	// HTML rules ("a single space between inline elements is preserved").
-	// Keep the pre-v7 behavior; revisit if templates are ever JSX-normalized.
-	compressHTML: true,
-
 	integrations: [
 		sitemap({
 			filter: (page) =>
