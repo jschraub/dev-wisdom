@@ -8,6 +8,13 @@ tags:
   - TypeScript
   - JavaScript
   - Functional Programming
+  - Pure Functions
+  - Referential Transparency
+  - Immutability
+  - Higher-Order Functions
+  - Composition
+  - Declarative Programming
+  - Web Development
 description: "The word 'function' means two different things, and the one you learned in Java is the one TypeScript keeps punishing. A pragmatic case for thinking in equations, not recipes."
 ogImage: ../../assets/images/your-functions-arent-functions-banner.png
 ---
@@ -124,10 +131,10 @@ class Counter extends Component {
 }
 
 // equation: state lives in a closure, no `this` in sight
-function Counter() {
+const Counter = () => {
   const [n, setN] = useState(0);
   const bump = () => setN(n => n + 1);
-}
+};
 ```
 
 The class makes state-and-behavior a thing you instantiate. The closure keeps the values right next to the function that uses them.

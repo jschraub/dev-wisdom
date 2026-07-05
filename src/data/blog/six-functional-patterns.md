@@ -8,6 +8,13 @@ tags:
   - TypeScript
   - JavaScript
   - Functional Programming
+  - Pure Functions
+  - Immutability
+  - Higher-Order Functions
+  - Composition
+  - Refactoring
+  - React
+  - Web Development
 description: "Six concrete moves that turn functional thinking into TypeScript you can ship on Monday — pipelines over loops, expressions over statements, immutable updates, higher-order functions, composition, and closures over classes — refactored on a real orders view."
 ogImage: ../../assets/images/six-functional-patterns-banner.png
 ---
@@ -90,9 +97,9 @@ Now `label` is `const` — defined once, where you can see it — and the `Recor
 Here's where mutation stops being a style note and starts shipping bugs. A user marks an order shipped, and the Java instinct reaches in and changes it where it sits:
 
 ```ts
-function ship(orders: Order[], index: number) {
+const ship = (orders: Order[], index: number) => {
   orders[index].status = "shipped"; // reaches into the original
-}
+};
 ```
 
 In plain code that's merely risky — anyone else holding `orders` just had the ground move under them. In React it's an actual bug, because state changes are detected by *reference*, and you just changed an object without changing the reference to it:
@@ -189,13 +196,13 @@ class OrdersView extends React.Component<Props, State> {
 Half of that is ceremony — `this`, `super`, the bind that fails silently if you forget it — and none of it is your feature. The function version throws the ceremony out:
 
 ```ts
-function OrdersView({ initialOrders }: Props) {
+const OrdersView = ({ initialOrders }: Props) => {
   const [orders, setOrders] = useState(initialOrders);
 
   const handleShip = (id: string) => setOrders(prev => shipOrder(prev, id));
 
   return <OrderList orders={orders} onShip={handleShip} />;
-}
+};
 ```
 
 No `this`, no constructor, no binding. `handleShip` is a plain closure over the state it needs, and the real logic — `shipOrder` — is the pure function from earlier, testable without ever mounting a component. Hooks aren't a quirky API to memorize; they're closures doing the job a class used to do. The class made state-plus-behavior *a thing you instantiate*. The closure makes it what it always was: values, and the functions that transform them.
@@ -205,7 +212,7 @@ No `this`, no constructor, no binding. `handleShip` is a plain closure over the 
 No single move earns its keep alone; the point is what they do combined. Here's the summary an orders dashboard needs, written the way you'd reach for it in Java — one loop doing four jobs at once, a running total, an array sorted in place:
 
 ```ts
-function summarize(orders: Order[]) {
+const summarize = (orders: Order[]) => {
   let total = 0;
   const active: Order[] = [];
   for (let i = 0; i < orders.length; i++) {
@@ -216,7 +223,7 @@ function summarize(orders: Order[]) {
   }
   active.sort((a, b) => (a.placedAt < b.placedAt ? 1 : -1)); // sorts in place
   return { active, total, count: active.length };
-}
+};
 ```
 
 To know what that returns you have to *run* it in your head — track `total` and `active` as the loop turns. Here's the same summary built from the named steps we already have:
@@ -231,10 +238,10 @@ const summarize = (orders: Order[]) => {
 Every line is one of the moves. `activeOrders` and `newestFirst` describe the result instead of assembling it; each returns a new value instead of mutating one; `sumTotals` folds with a function you handed it; and the whole thing is three small pieces composed, each testable on its own. Drop it into the component and the last move falls out for free — a closure over props, no `this` in sight:
 
 ```ts
-function OrdersDashboard({ orders }: { orders: Order[] }) {
+const OrdersDashboard = ({ orders }: { orders: Order[] }) => {
   const { active, total, count } = summarize(orders);
   return <Summary orders={active} total={total} count={count} />;
-}
+};
 ```
 
 The imperative version wasn't *wrong*. It was a recipe — something you have to execute to understand. The functional one is closer to a statement of what the summary *is*.
@@ -248,9 +255,8 @@ Now the honesty, because a pattern you can't say no to is a religion, not a tool
 There's a seventh move I've been holding back, because it's the bridge to everything after this. Look at what you do when an order might not be there:
 
 ```ts
-function findOrder(orders: Order[], id: string): Order | null {
-  return orders.find(o => o.id === id) ?? null;
-}
+const findOrder = (orders: Order[], id: string): Order | null =>
+  orders.find(o => o.id === id) ?? null;
 
 const order = findOrder(orders, id);
 if (order === null) {
@@ -265,10 +271,10 @@ type Result<T, E> =
   | { ok: true; value: T }
   | { ok: false; error: E };
 
-function findOrder(orders: Order[], id: string): Result<Order, "not_found"> {
+const findOrder = (orders: Order[], id: string): Result<Order, "not_found"> => {
   const found = orders.find(o => o.id === id);
   return found ? { ok: true, value: found } : { ok: false, error: "not_found" };
-}
+};
 
 const result = findOrder(orders, id);
 switch (result.ok) {

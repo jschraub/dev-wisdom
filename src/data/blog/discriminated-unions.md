@@ -8,6 +8,14 @@ tags:
   - TypeScript
   - JavaScript
   - Functional Programming
+  - Discriminated Unions
+  - Tagged Unions
+  - Algebraic Data Types
+  - Type Safety
+  - Domain Modeling
+  - State Machines
+  - React
+  - Web Development
 description: "Three booleans give you eight states when you only meant four. Discriminated unions make the illegal ones unrepresentable — model a value as exactly one of a fixed set of shapes and let TypeScript hold you to it."
 ogImage: ../../assets/images/discriminated-unions-banner.png
 ---
@@ -17,7 +25,7 @@ ogImage: ../../assets/images/discriminated-unions-banner.png
 You've written this component. A thing loads, it might fail, and if it works you show it:
 
 ```ts
-function UserProfile({ id }: { id: string }) {
+const UserProfile = ({ id }: { id: string }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [user, setUser] = useState<User | null>(null);
@@ -28,7 +36,7 @@ function UserProfile({ id }: { id: string }) {
   if (error) return <ErrorBanner message={error.message} />;
   if (user) return <Profile user={user} />;
   return null;
-}
+};
 ```
 
 Three pieces of state. Reasonable. Ships every day. But count what those three can spell between them: each is independently on or off, so there are 2 × 2 × 2 = **eight** combinations the types happily allow — and only about four of them mean anything. What is `{ isLoading: true, error: someError, user: someUser }`? Loading, but also failed, but also succeeded? What's the bottom `return null` catching — the state where it's not loading, hasn't errored, and has no user? You wrote that branch to silence a warning, not because it's a real thing.
@@ -97,14 +105,14 @@ const assertNever = (x: never): never => {
   throw new Error(`Unhandled variant: ${JSON.stringify(x)}`);
 };
 
-function render(state: RemoteData<User>) {
+const render = (state: RemoteData<User>) => {
   switch (state.status) {
     case "loading": return <Spinner />;
     case "error":   return <ErrorBanner message={state.error.message} />;
     case "success": return <Profile user={state.data} />;
     default:        return assertNever(state);
   }
-}
+};
 ```
 
 By the `default`, all three cases have been narrowed away, so `state` has type `never` — the empty type — and `assertNever` accepts it. Now add a fourth shape, say `{ status: "refetching"; data: T }`. Suddenly `state` in that `default` isn't `never` anymore; it's the new variant, and `assertNever` _won't compile_. Every `switch` across the codebase that didn't add a `"refetching"` case lights up red, pointing you at exactly the spots that now have a hole. You didn't write a test for that. The type system walked you to every call site that has to change the moment you added a state.

@@ -8,6 +8,14 @@ tags:
   - TypeScript
   - JavaScript
   - Functional Programming
+  - Error Handling
+  - Result Type
+  - Option Type
+  - Discriminated Unions
+  - Monads
+  - Railway Oriented Programming
+  - Type Safety
+  - Web Development
 description: "Stop throwing, start returning. Model failure as a value with Result, compose fallible steps on a railway, make illegal states unrepresentable, and let TypeScript force you to handle every error — no try/catch required."
 ogImage: ../../assets/images/errors-are-values-banner.png
 ---
@@ -19,7 +27,7 @@ At the end of [the last piece](/posts/six-functional-patterns) I changed a funct
 Here's the pain it opens onto. You've written this handler — find an order, make sure it can ship, ship it:
 
 ```ts
-function handleShip(orders: Order[], id: string) {
+const handleShip = (orders: Order[], id: string) => {
   const order = orders.find(o => o.id === id);
   if (!order) return toast("That order doesn't exist.");
   if (order.status === "cancelled") return toast("Cancelled orders can't ship.");
@@ -31,7 +39,7 @@ function handleShip(orders: Order[], id: string) {
   } catch {
     toast("Couldn't ship — try again.");
   }
-}
+};
 ```
 
 Look at how many different ways this thing fails. A `null` from `.find`. A sentinel comparison against a string. A thrown exception caught by a `try/catch` that's quietly doing the job of an `if`. Three failure modes, three mechanisms, and here's the part that should bother you: **not one of them shows up in a type.** `ship` is declared to return a `ShippedOrder`. The signature is a flat statement that it succeeds. The throw is a trapdoor in the floor that the type never mentions, and the only way to know it's there is to have read the body — or to have fallen through it in production.
@@ -296,6 +304,6 @@ Reach for one when the hand-rolled version starts to chafe — not before. The i
 
 ## The doorway
 
-The railway is only ever as honest as the data that boards it. Every step above trusted that `orders` was a real array of well-formed `Order`s — but that array came off the network as `any`, parsed from JSON that some server promised, not your compiler. We made illegal states unrepresentable _inside_ the program; the front door is still wide open. The move that closes it — parsing untrusted input exactly once, at the boundary, into a type that cannot be invalid, so nothing downstream ever has to check again — is the next piece: **Parse, Don't Validate**.
+The railway is only ever as honest as the data that boards it. Every step above trusted that `orders` was a real array of well-formed `Order`s — but that array came off the network as `any`, parsed from JSON that some server promised, not your compiler. We made illegal states unrepresentable _inside_ the program; the front door is still wide open. The move that closes it — parsing untrusted input exactly once, at the boundary, into a type that cannot be invalid, so nothing downstream ever has to check again — is the next piece: [**Parse, Don't Validate**](/posts/parse-dont-validate).
 
 You walked in throwing exceptions and forgetting null checks. Now failure is a value you return, a railway composes your fallible steps without a single `try`, illegal states won't compile, and the scary word turned out to be a box with a `flatMap`. Your errors aren't accidents that escape your functions anymore. They're part of what your functions _are_.
