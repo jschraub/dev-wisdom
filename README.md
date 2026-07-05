@@ -46,13 +46,6 @@ pnpm install
 pnpm run dev
 ```
 
-Or with Docker:
-
-```bash
-docker build -t jaredschraub .
-docker run -p 4321:80 jaredschraub
-```
-
 ## 🧞 Commands
 
 | Command                 | Action                                          |
@@ -61,9 +54,9 @@ docker run -p 4321:80 jaredschraub
 | `pnpm run dev`          | Start local dev server at `localhost:4321`      |
 | `pnpm run build`        | Build the production site to `./dist/`          |
 | `pnpm run preview`      | Preview the build locally before deploying      |
-| `pnpm run format`       | Format with Prettier                            |
-| `pnpm run lint`         | Lint with ESLint                                |
-| `docker compose up -d`  | Run the dev server in Docker                    |
+| `pnpm run format`       | Format with Biome                               |
+| `pnpm run lint`         | Lint with Biome                                 |
+| `pnpm run check`        | Format + lint + organize imports (Biome, write) |
 
 ## Credits
 
