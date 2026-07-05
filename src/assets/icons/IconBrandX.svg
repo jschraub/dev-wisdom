@@ -1,16 +1,12 @@
 <svg
-	xmlns="http://www.w3.org/2000/svg"
 	width="24"
 	height="24"
-	viewBox="0 0 24 24"
-	fill="none"
-	stroke="currentColor"
-	stroke-width="2"
-	stroke-linecap="round"
-	stroke-linejoin="round"
-	class="icon icon-tabler icons-tabler-outline icon-tabler-brand-x"
+	aria-hidden="true"
+	xmlns="http://www.w3.org/2000/svg"
+	viewBox="0 0 256 256"
+	fill="currentColor"
 >
-	<path stroke="none" d="M0 0h24v24H0z" fill="none" />
-	<path d="M4 4l11.733 16h4.267l-11.733 -16z" />
-	<path d="M4 20l6.768 -6.768m2.46 -2.46l6.772 -6.772" />
+	<path
+		d="M214.75,211.71l-62.6-98.38,61.77-67.95a8,8,0,0,0-11.84-10.76L143.24,99.34,102.75,35.71A8,8,0,0,0,96,32H48a8,8,0,0,0-6.75,12.3l62.6,98.37-61.77,68a8,8,0,1,0,11.84,10.76l58.84-64.72,40.49,63.63A8,8,0,0,0,160,224h48a8,8,0,0,0,6.75-12.29ZM164.39,208,62.57,48h29L193.43,208Z"
+	/>
 </svg>
