@@ -1,0 +1,8 @@
+# pnpm settings live here as of pnpm 10+ (the package.json "pnpm" field is no longer read).
+# Allow these native packages to run their install build scripts — pnpm blocks build scripts
+# by default, which otherwise fails `pnpm dev`/`pnpm build` with ERR_PNPM_IGNORED_BUILDS.
+# `allowBuilds` (map of package -> true/false) replaced the removed `onlyBuiltDependencies` in pnpm v11.
+allowBuilds:
+  esbuild: true
+  sharp: true
+  workerd: true
