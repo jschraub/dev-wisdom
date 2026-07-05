@@ -46,8 +46,8 @@ Governs every piece.
 
 ## Visuals & signature
 
-- **Three bespoke diagrams, one shared style** — only where the concept is genuinely spatial: the railway (#3), functional core / imperative shell (#5), fold-over-events timeline (#6).
-- **Recurring motif = the series signature:** a styled before/after "pain → move → payoff" block in every piece. Code is the visual everywhere else — don't force diagrams onto Parse, Lenses, or Testing.
+- **Bespoke diagrams, one shared style — hand-authored inline SVG** (tooling decided 2026-07-04: no ASCII, no Mermaid — see the diagramming note in `HANDOFF.md`), where the concept is genuinely spatial: the railway (#3), the boundary-gate (#4), functional core / imperative shell (#5), fold-over-events timeline (#6).
+- **Recurring motif = the series signature:** a styled before/after "pain → move → payoff" block in every piece. Code is the visual everywhere else — don't force diagrams onto Lenses or Testing.
 
 ---
 
@@ -79,7 +79,7 @@ Governs every piece.
 
 ---
 
-## 4 · Parse, Don't Validate: Making Bad Input Impossible in TypeScript  ← to write
+## 4 · Parse, Don't Validate: Making Bad Input Impossible in TypeScript  ✓ published & featured
 *Stage 2 · ~2,000w · make bad input impossible*
 
 - **Frame:** recognition — you check `if (!user.email)` in fifteen places because the type says `email?: string` forever. Parse untrusted input *once* at the boundary into a type that can't be invalid, and the fifteen checks vanish.
@@ -146,17 +146,26 @@ The set is never announced. Instead, links accrete as pieces ship:
 
 **Link map** (added when the *later* piece publishes):
 
-- **Live links** (published posts): #1 → #2 (close) **and #1 → #3** (seventh-habit paragraph); #2 → #1 (open callback) **and #2 → #3** (doorway, last line); #3 → #2 (open callback) **and #3 → primer** (DU section). The primer is standalone (no outbound series links). **#3 → #4 stays light prose with no link** until #4 ships, then it becomes a link and #4 opens with a backward link to #3.
-- **#3 (`errors-are-values`) is published & featured.** Its backward-link pass is **done**: #2 → #3 and #1 → #3 are live.
-- **Primer (`discriminated-unions`) is published & featured.** Inbound: **#3 → primer is wired** (in #3's DU section); **#4 → primer** and **#6 → primer** to add when those ship. #1/#2 deliberately do **not** link it — it's reached via #3. Outbound: none; the primer body is standalone.
+- **Live links** (published posts): #1 → #2 (close) **and #1 → #3** (seventh-habit paragraph); #2 → #1 (open callback) **and #2 → #3** (doorway, last line); #3 → #2 (open callback) **and #3 → primer** (DU section). The primer is standalone (no outbound series links). **#3 → #4 is now a link** — #3's doorway links `/posts/parse-dont-validate`, and #4 opens with a backward link to #3. Both are **live** now that #4 is published & featured.
+- **#3 (`errors-are-values`) is published & featured.** Its backward-link pass is **done**: #2 → #3 and #1 → #3 are live. Forward link #3 → #4 is now **wired** (doorway links `/posts/parse-dont-validate`).
+- **#4 (`parse-dont-validate`) is published & featured** (`featured: true`, `draft` stripped, pubDatetime 2026-07-04). Backward links **live**: #4 → #3 (open callback) and #4 → primer (in the DU-parse section). Doorway names **Effects Are Values** (no link until #5 ships).
+- **Primer (`discriminated-unions`) is published & featured.** Inbound: **#3 → primer is wired** (in #3's DU section) and **#4 → primer is wired** (in #4's DU-parse section); **#6 → primer** to add when #6 ships. #1/#2 deliberately do **not** link it — it's reached via #3. Outbound: none; the primer body is standalone.
 - **#1** ← everything (the foundational "why"); #8 explicitly closes back to #1's substitution.
 - **#2** → #7 (immutability section → lenses for deep nesting); → #3 (honest-types doorway, already planned).
-- **#3** → #4 (illegal-states → boundary parsing); → #5 (`Result` → effects-as-values parallel); → #8 (testing `Result` pipelines).
-- **#4** → #5 (the boundary is where effects live).
+- **#3** → #4 (illegal-states → boundary parsing) **[live]**; → #5 (`Result` → effects-as-values parallel); → #8 (testing `Result` pipelines).
+- **#4** → #5 (the boundary is where effects live) — doorway names **Effects Are Values**, no link until #5 ships; ← #3 and ← primer both **live**.
 - **#5** → #6 (decisions-as-data → events); → #8 (pure core → testable).
 - **#6** → #8 (pure reducers → property tests).
 - **#7** ← #2, #3.
 - **#8** ← #1, #3, #4, #5, #6 (the payoff links back broadly).
+
+## Section headers — deferred retro-pass
+
+#4 (Parse, Don't Validate) deliberately broke from the generic section headers #3 established — "Where this gets industrial", "Where it's not worth it", "The doorway" — because reusing them verbatim made #4 read like a template redo of #3. #4 uses **descriptive, piece-specific headers** instead ("Generate the parser, don't write it", "Parse at the edge, not everywhere", "What else lives at the boundary").
+
+**Going forward:** section headers should be descriptive and specific to the piece, not a reused template — while the underlying *structure* (a "productionize with a library" beat, a caveat, a next-piece doorway) stays consistent.
+
+**Deferred work (low priority, cosmetic):** #1–#3 still use the older generic headers. Retro-pass them to descriptive, piece-specific headers for whole-series consistency when convenient — same spirit as the cross-link retro-pass above. No rush; purely cosmetic.
 
 ## Supporting posts (outside the eight)
 
