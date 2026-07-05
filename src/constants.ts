@@ -1,5 +1,6 @@
 import type { Props } from "astro";
 import IconBrandX from "@/assets/icons/IconBrandX.svg";
+import IconEnvelope from "@/assets/icons/IconEnvelope.svg";
 import IconFacebook from "@/assets/icons/IconFacebook.svg";
 import IconGitHub from "@/assets/icons/IconGitHub.svg";
 import IconLinkedin from "@/assets/icons/IconLinkedin.svg";
@@ -39,7 +40,9 @@ export const SOCIALS: Social[] = [
 		name: "Mail",
 		href: "mailto:jaredschraub@outlook.com",
 		linkTitle: `Send an email to ${SITE.title}`,
-		icon: IconMail,
+		// Phosphor; SHARE_LINKS below still uses the stroke-based IconMail
+		// until the post-page share row is restyled (slice 6).
+		icon: IconEnvelope,
 	},
 ] as const;
 
