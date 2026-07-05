@@ -20,16 +20,16 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20]
+        # Astro 7 requires Node >= 22.12
+        node-version: [24]
 
     steps:
       - name: "☁️ Checkout repository"
         uses: actions/checkout@v4
 
       - name: "📦 Install pnpm"
+        # pnpm version comes from the packageManager field in package.json
         uses: pnpm/action-setup@v4
-        with:
-          version: 10.11.1
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -40,11 +40,8 @@ jobs:
       - name: "📦 Install dependencies"
         run: pnpm install
 
-      - name: "🔎 Lint code"
-        run: pnpm run lint
-
-      - name: "📝 Checking code format"
-        run: pnpm run format:check
+      - name: "🔎 Lint & format check (Biome)"
+        run: pnpm exec biome ci .
 
       - name: "🚀 Build the project"
         run: pnpm run build

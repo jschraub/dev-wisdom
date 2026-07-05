@@ -1,0 +1,96 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.5.2/schema.json",
+	// Respect .gitignore (dist/, .astro/, node_modules/, public/pagefind) —
+	// this replaces per-tool ignore files.
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"ignoreUnknown": true
+	},
+	// Formatter runs on Biome defaults: tab indentation, 80-column width, LF,
+	// double quotes, semicolons, arrow parens, trailing commas everywhere.
+	"assist": {
+		"enabled": true,
+		"actions": {
+			"source": {
+				"organizeImports": "on"
+			}
+		}
+	},
+	"linter": {
+		"enabled": true,
+		"rules": {
+			"preset": "recommended",
+			// Deliberate additions beyond the recommended preset:
+			// no stray console.* in shipped client scripts…
+			"suspicious": {
+				"noConsole": "error"
+			},
+			// …and Tailwind class sorting for JS/TS class attributes/literals
+			// (nursery rule; cannot reach .astro template markup — see ADR 0001).
+			"nursery": {
+				"useSortedClasses": {
+					"level": "warn",
+					"options": {
+						"attributes": ["class:list"]
+					}
+				}
+			}
+		}
+	},
+	"css": {
+		// Understand Tailwind at-rules (@apply, @utility, @variant, …).
+		"parser": {
+			"tailwindDirectives": true
+		}
+	},
+	// The HTML-family formatter (.html/.svg) is off by default in Biome 2.5;
+	// opt in so SVG assets are formatted. .astro handling stays "code-only":
+	// Biome formats/lints frontmatter and <script> JS/TS but not template
+	// markup — full template support (experimentalFullSupportEnabled) is OFF
+	// because Biome 2.5's Astro parser can't parse `{/* */}` JSX comments.
+	// See ADR 0001.
+	"html": {
+		"formatter": {
+			"enabled": true
+		},
+		"experimentalFullSupportEnabled": false
+	},
+	"overrides": [
+		{
+			// Icon/asset SVGs are decorative sources consumed as Astro SVG
+			// components; alternative text lives at the usage sites (sr-only
+			// spans, aria-labels on the wrapping links), so a <title> inside
+			// each asset would double-announce. Formatting still applies.
+			"includes": ["**/*.svg"],
+			"linter": {
+				"rules": {
+					"a11y": {
+						"noSvgWithoutTitle": "off"
+					}
+				}
+			}
+		},
+		{
+			// Community-standard .astro override (astro-tips.dev/tips/biome):
+			// in code-only mode Biome can't see template usage, so rules that
+			// depend on it would false-positive. `astro check` covers these.
+			"includes": ["**/*.astro"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useConst": "off",
+						"useImportType": "off"
+					},
+					"correctness": {
+						"noUnusedVariables": "off",
+						"noUnusedImports": "off"
+					}
+				}
+			}
+		}
+	]
+}
