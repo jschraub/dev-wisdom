@@ -104,14 +104,9 @@ import "@/styles/pagefind.css";
       element: "#search-overlay-container",
       showSubResults: true,
       showImages: false,
+      autofocus: true,
       bundlePath: "/pagefind/",
     });
-  }
-
-  function focusSearchInput(): void {
-    getDialog()
-      ?.querySelector<HTMLInputElement>(".pagefind-ui__search-input")
-      ?.focus();
   }
 
   async function openOverlay(from?: HTMLElement | null): Promise<void> {
@@ -120,7 +115,16 @@ import "@/styles/pagefind.css";
     invoker = from ?? (document.activeElement as HTMLElement | null);
     dialog.showModal();
     await ensureSearchUI();
-    focusSearchInput();
+
+    // First mount is focused by PagefindUI's autofocus (and the autofocus
+    // attribute makes showModal() focus the input natively thereafter).
+    // On same-page re-opens the input already exists with the previous
+    // query — re-focus and select it so typing replaces the old term.
+    const input = dialog.querySelector<HTMLInputElement>(
+      ".pagefind-ui__search-input",
+    );
+    input?.focus();
+    input?.select();
   }
 
   function closeOverlay(): void {
