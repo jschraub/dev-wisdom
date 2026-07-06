@@ -1,12 +1,13 @@
 ---
-import IconArchive from "@/assets/icons/IconArchive.svg";
-import IconMenuDeep from "@/assets/icons/IconMenuDeep.svg";
-import IconMonitor from "@/assets/icons/IconMonitor.svg";
-import IconMoon from "@/assets/icons/IconMoon.svg";
-import IconSearch from "@/assets/icons/IconSearch.svg";
-import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
-import IconX from "@/assets/icons/IconX.svg";
+import IconArchive from "@phosphor-icons/core/assets/regular/archive.svg";
+import IconMenuDeep from "@phosphor-icons/core/assets/regular/list.svg";
+import IconSearch from "@phosphor-icons/core/assets/regular/magnifying-glass.svg";
+import IconMonitor from "@phosphor-icons/core/assets/regular/monitor.svg";
+import IconMoon from "@phosphor-icons/core/assets/regular/moon.svg";
+import IconSunHigh from "@phosphor-icons/core/assets/regular/sun.svg";
+import IconX from "@phosphor-icons/core/assets/regular/x.svg";
 import { SITE } from "@/config";
+import Icon from "./Icon.astro";
 import LinkButton from "./LinkButton.astro";
 
 const { pathname } = Astro.url;
@@ -60,8 +61,8 @@ const isActive = (path: string) => {
         aria-expanded="false"
         aria-controls="menu-items"
       >
-        <IconX id="close-icon" class="hidden" />
-        <IconMenuDeep id="menu-icon" />
+        <Icon icon={IconX} id="close-icon" class="hidden" />
+        <Icon icon={IconMenuDeep} id="menu-icon" />
       </button>
       <ul
         id="menu-items"
@@ -101,7 +102,7 @@ const isActive = (path: string) => {
                 title="Archives"
                 aria-label="archives"
               >
-                <IconArchive class="hidden sm:inline-block" />
+                <Icon icon={IconArchive} class="hidden sm:inline-block" />
                 <span class="sm:sr-only">Archives</span>
               </LinkButton>
             </li>
@@ -120,7 +121,7 @@ const isActive = (path: string) => {
             title="Search (⌘K)"
             aria-label="Search"
           >
-            <IconSearch />
+            <Icon icon={IconSearch} />
             <span class="sr-only">Search</span>
           </LinkButton>
         </li>
@@ -139,9 +140,18 @@ const isActive = (path: string) => {
                 aria-label="Theme: system"
                 aria-live="polite"
               >
-                <IconSunHigh class="absolute top-[50%] left-[50%] -translate-[50%] scale-0 rotate-90 transition-all motion-reduce:transition-none [[data-theme-preference=light]_&]:scale-100 [[data-theme-preference=light]_&]:rotate-0" />
-                <IconMonitor class="absolute top-[50%] left-[50%] -translate-[50%] scale-100 rotate-0 transition-all motion-reduce:transition-none [[data-theme-preference=dark]_&]:scale-0 [[data-theme-preference=dark]_&]:-rotate-90 [[data-theme-preference=light]_&]:scale-0 [[data-theme-preference=light]_&]:rotate-90" />
-                <IconMoon class="absolute top-[50%] left-[50%] -translate-[50%] scale-0 -rotate-90 transition-all motion-reduce:transition-none [[data-theme-preference=dark]_&]:scale-100 [[data-theme-preference=dark]_&]:rotate-0" />
+                <Icon
+                  icon={IconSunHigh}
+                  class="absolute top-[50%] left-[50%] -translate-[50%] scale-0 rotate-90 transition-all motion-reduce:transition-none [[data-theme-preference=light]_&]:scale-100 [[data-theme-preference=light]_&]:rotate-0"
+                />
+                <Icon
+                  icon={IconMonitor}
+                  class="absolute top-[50%] left-[50%] -translate-[50%] scale-100 rotate-0 transition-all motion-reduce:transition-none [[data-theme-preference=dark]_&]:scale-0 [[data-theme-preference=dark]_&]:-rotate-90 [[data-theme-preference=light]_&]:scale-0 [[data-theme-preference=light]_&]:rotate-90"
+                />
+                <Icon
+                  icon={IconMoon}
+                  class="absolute top-[50%] left-[50%] -translate-[50%] scale-0 -rotate-90 transition-all motion-reduce:transition-none [[data-theme-preference=dark]_&]:scale-100 [[data-theme-preference=dark]_&]:rotate-0"
+                />
               </button>
             </li>
           )

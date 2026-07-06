@@ -1,10 +1,11 @@
 ---
 import { getCollection } from "astro:content";
-import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
-import IconRss from "@/assets/icons/IconRss.svg";
+import IconArrowRight from "@phosphor-icons/core/assets/regular/arrow-right.svg";
+import IconRss from "@phosphor-icons/core/assets/regular/rss.svg";
 import Card from "@/components/Card.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
+import Icon from "@/components/Icon.astro";
 import LinkButton from "@/components/LinkButton.astro";
 import Socials from "@/components/Socials.astro";
 import { SITE } from "@/config";
@@ -33,7 +34,12 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
         aria-label="rss feed"
         title="RSS Feed"
       >
-        <IconRss width={20} height={20} class="fill-accent rtl:-rotate-90" />
+        <Icon
+          icon={IconRss}
+          width={20}
+          height={20}
+          class="fill-accent rtl:-rotate-90"
+        />
         <span class="sr-only">RSS Feed</span>
       </a>
 
@@ -94,7 +100,7 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
     <div class="my-8 text-center">
       <LinkButton href="/posts/">
         All Posts
-        <IconArrowRight class="inline-block rtl:-rotate-180" />
+        <Icon icon={IconArrowRight} class="inline-block rtl:-rotate-180" />
       </LinkButton>
     </div>
   </main>

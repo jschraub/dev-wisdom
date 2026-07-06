@@ -1,7 +1,7 @@
 ---
 import { type CollectionEntry, render } from "astro:content";
-import IconChevronLeft from "@/assets/icons/IconChevronLeft.svg";
-import IconChevronRight from "@/assets/icons/IconChevronRight.svg";
+import IconCaretLeft from "@phosphor-icons/core/assets/regular/caret-left.svg";
+import IconCaretRight from "@phosphor-icons/core/assets/regular/caret-right.svg";
 import BackButton from "@/components/BackButton.astro";
 import BackToTopButton from "@/components/BackToTopButton.astro";
 import Datetime from "@/components/Datetime.astro";
@@ -9,6 +9,7 @@ import DraftBadge from "@/components/DraftBadge.astro";
 import EditPost from "@/components/EditPost.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
+import Icon from "@/components/Icon.astro";
 import ShareLinks from "@/components/ShareLinks.astro";
 import Tag from "@/components/Tag.astro";
 import { SITE } from "@/config";
@@ -144,7 +145,10 @@ const nextPost =
             href={getPath(prevPost.id, prevPost.filePath)}
             class="flex w-full gap-1 hover:opacity-75"
           >
-            <IconChevronLeft class="inline-block flex-none rtl:rotate-180" />
+            <Icon
+              icon={IconCaretLeft}
+              class="inline-block flex-none rtl:rotate-180"
+            />
             <div>
               <span>Previous Post</span>
               <div class="text-sm text-accent/85">{prevPost.title}</div>
@@ -162,7 +166,10 @@ const nextPost =
               <span>Next Post</span>
               <div class="text-sm text-accent/85">{nextPost.title}</div>
             </div>
-            <IconChevronRight class="inline-block flex-none rtl:rotate-180" />
+            <Icon
+              icon={IconCaretRight}
+              class="inline-block flex-none rtl:rotate-180"
+            />
           </a>
         )
       }

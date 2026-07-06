@@ -1,5 +1,6 @@
 ---
 import { SOCIALS } from "@/constants";
+import Icon from "./Icon.astro";
 import LinkButton from "./LinkButton.astro";
 ---
 
@@ -11,7 +12,10 @@ import LinkButton from "./LinkButton.astro";
         class="rounded-md p-2 text-muted-foreground transition-colors hover:text-accent motion-reduce:transition-none sm:p-1.5"
         title={social.linkTitle}
       >
-        <social.icon class="inline-block size-6 fill-current sm:size-5" />
+        <Icon
+          icon={social.icon}
+          class="inline-block size-6 fill-current sm:size-5"
+        />
         <span class="sr-only">{social.linkTitle}</span>
       </LinkButton>
     ))
