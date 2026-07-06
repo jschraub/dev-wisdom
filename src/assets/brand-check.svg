@@ -1,9 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 22" fill="none">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 22" fill="none">
 	<!-- The brand mark's check-as-period — same geometry as the favicon and
 	     OG brand row (ADR 0003 amendment, issue #11). Deliberately our own
-	     asset, not a Phosphor icon: brand art keeps its exact drawn form. -->
+	     asset, not a Phosphor icon: brand art keeps its exact drawn form.
+	     Round caps extend stroke-width/2 = 2.5 past each endpoint, so the
+	     path keeps that margin from the viewBox edges. -->
 	<path
-		d="M2 12 L9 19 L24 3"
+		d="M3 12 L10 19 L25 3"
 		stroke="currentColor"
 		stroke-width="5"
 		stroke-linecap="round"
