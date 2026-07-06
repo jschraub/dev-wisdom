@@ -1,7 +1,8 @@
 ---
 import type { CollectionEntry } from "astro:content";
-import IconEdit from "@/assets/icons/IconEdit.svg";
+import IconEdit from "@phosphor-icons/core/assets/regular/pencil-simple.svg";
 import { SITE } from "@/config";
+import Icon from "./Icon.astro";
 
 type Props = {
 	hideEditPost?: CollectionEntry<"blog">["data"]["hideEditPost"];
@@ -27,7 +28,7 @@ const showEditPost =
         className,
       ]}
     >
-      <IconEdit class="inline-block" />
+      <Icon icon={IconEdit} class="inline-block" />
       <span>{SITE.editPost.text}</span>
     </a>
   )

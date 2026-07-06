@@ -1,10 +1,11 @@
 ---
 import { getCollection } from "astro:content";
-import IconArrowRight from "@/assets/icons/IconArrowRight.svg";
-import IconRss from "@/assets/icons/IconRss.svg";
+import IconArrowRight from "@phosphor-icons/core/assets/regular/arrow-right.svg";
+import IconRss from "@phosphor-icons/core/assets/regular/rss.svg";
 import Card from "@/components/Card.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
+import Icon from "@/components/Icon.astro";
 import LinkButton from "@/components/LinkButton.astro";
 import Socials from "@/components/Socials.astro";
 import { SITE } from "@/config";
@@ -23,20 +24,21 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
   <Header />
   <main id="main-content" data-layout="index" class="app-layout">
     <section id="hero" class:list={["pt-8 pb-6", "border-b border-border"]}>
-      <h1 class="my-4 inline-block text-4xl font-bold sm:my-8 sm:text-5xl">
+      <h1 class="my-4 inline-block text-4xl font-semibold sm:my-8 sm:text-5xl">
         {SITE.tagline}
       </h1>
       <a
         target="_blank"
         href="/rss.xml"
-        class="inline-block"
+        class="ms-3 inline-block"
         aria-label="rss feed"
         title="RSS Feed"
       >
-        <IconRss
+        <Icon
+          icon={IconRss}
           width={20}
           height={20}
-          class="scale-125 stroke-accent stroke-3 rtl:-rotate-90"
+          class="fill-accent rtl:-rotate-90"
         />
         <span class="sr-only">RSS Feed</span>
       </a>
@@ -45,7 +47,7 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
       <p class="mt-2">
         Read the blog posts or check{" "}
         <LinkButton
-          class="underline decoration-dashed underline-offset-4 hover:text-accent"
+          class="underline decoration-foreground/30 underline-offset-4 hover:text-accent hover:decoration-accent/60"
           href="https://github.com/jschraub/dev-wisdom#readme"
         >
           README
@@ -98,7 +100,7 @@ const recentPosts = sortedPosts.filter(({ data }) => !data.featured);
     <div class="my-8 text-center">
       <LinkButton href="/posts/">
         All Posts
-        <IconArrowRight class="inline-block rtl:-rotate-180" />
+        <Icon icon={IconArrowRight} class="inline-block rtl:-rotate-180" />
       </LinkButton>
     </div>
   </main>

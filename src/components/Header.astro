@@ -1,11 +1,14 @@
 ---
-import IconArchive from "@/assets/icons/IconArchive.svg";
-import IconMenuDeep from "@/assets/icons/IconMenuDeep.svg";
-import IconMoon from "@/assets/icons/IconMoon.svg";
-import IconSearch from "@/assets/icons/IconSearch.svg";
-import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
-import IconX from "@/assets/icons/IconX.svg";
+import IconArchive from "@phosphor-icons/core/assets/regular/archive.svg";
+import IconMenuDeep from "@phosphor-icons/core/assets/regular/list.svg";
+import IconSearch from "@phosphor-icons/core/assets/regular/magnifying-glass.svg";
+import IconMonitor from "@phosphor-icons/core/assets/regular/monitor.svg";
+import IconMoon from "@phosphor-icons/core/assets/regular/moon.svg";
+import IconSunHigh from "@phosphor-icons/core/assets/regular/sun.svg";
+import IconX from "@phosphor-icons/core/assets/regular/x.svg";
+import BrandCheck from "@/assets/brand-check.svg";
 import { SITE } from "@/config";
+import Icon from "./Icon.astro";
 import LinkButton from "./LinkButton.astro";
 
 const { pathname } = Astro.url;
@@ -25,7 +28,7 @@ const isActive = (path: string) => {
 <a
   id="skip-to-content"
   href="#main-content"
-  class="absolute start-16 -top-full z-50 bg-background px-3 py-2 text-accent backdrop-blur-lg transition-all focus:top-4"
+  class="absolute start-16 -top-full z-50 rounded-md border border-border bg-background px-3 py-2 text-accent backdrop-blur-lg transition-all focus:top-4 motion-reduce:transition-none"
 >
   Skip to content
 </a>
@@ -44,9 +47,10 @@ const isActive = (path: string) => {
   >
     <a
       href="/"
-      class="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap sm:static sm:my-auto sm:text-2xl sm:leading-none"
+      class="absolute py-1 text-xl leading-8 font-semibold tracking-[-0.01em] whitespace-nowrap sm:static sm:my-auto sm:text-2xl sm:leading-none"
     >
-      {SITE.title}
+      {SITE.title}{" "}
+      <Icon icon={BrandCheck} class="inline-block size-[0.5em] text-gold" />
     </a>
     <nav
       id="nav-menu"
@@ -54,13 +58,13 @@ const isActive = (path: string) => {
     >
       <button
         id="menu-btn"
-        class="focus-outline self-end p-2 sm:hidden"
+        class="self-end rounded-md p-2 hover:text-accent sm:hidden"
         aria-label="Open Menu"
         aria-expanded="false"
         aria-controls="menu-items"
       >
-        <IconX id="close-icon" class="hidden" />
-        <IconMenuDeep id="menu-icon" />
+        <Icon icon={IconX} id="close-icon" class="hidden" />
+        <Icon icon={IconMenuDeep} id="menu-icon" />
       </button>
       <ul
         id="menu-items"
@@ -92,46 +96,64 @@ const isActive = (path: string) => {
               <LinkButton
                 href="/archives"
                 class:list={[
-                  "focus-outline flex justify-center p-3 sm:p-1",
+                  "flex justify-center rounded-md p-3 sm:p-1",
                   {
-                    "active-nav [&>svg]:stroke-accent": isActive("/archives"),
+                    "active-nav text-accent": isActive("/archives"),
                   },
                 ]}
                 title="Archives"
                 aria-label="archives"
               >
-                <IconArchive class="hidden sm:inline-block" />
+                <Icon icon={IconArchive} class="hidden sm:inline-block" />
                 <span class="sm:sr-only">Archives</span>
               </LinkButton>
             </li>
           )
         }
         <li class="col-span-1 flex items-center justify-center">
+          {/* Progressively enhanced: SearchOverlay's delegated click handler
+              opens the ⌘K dialog; without JS this stays a link to /search. */}
           <LinkButton
+            id="search-btn"
             href="/search"
             class:list={[
-              "focus-outline flex p-3 sm:p-1",
-              { "[&>svg]:stroke-accent": isActive("/search") },
+              "flex rounded-md p-3 sm:p-1",
+              { "text-accent": isActive("/search") },
             ]}
-            title="Search"
-            aria-label="search"
+            title="Search (⌘K)"
+            aria-label="Search"
           >
-            <IconSearch />
+            <Icon icon={IconSearch} />
             <span class="sr-only">Search</span>
           </LinkButton>
         </li>
         {
           SITE.lightAndDarkMode && (
             <li class="col-span-1 flex items-center justify-center">
+              {/* Cycles light → system → dark (src/scripts/theme.ts).
+                  Icon shown = current *preference*, keyed off the
+                  data-theme-preference attribute on <html>. Monitor is the
+                  base state so it also renders without JS. aria-live lets
+                  the aria-label mutation announce each change. */}
               <button
                 id="theme-btn"
-                class="focus-outline relative size-12 p-4 sm:size-8 hover:[&>svg]:stroke-accent"
-                title="Toggles light & dark"
-                aria-label="auto"
+                class="relative size-12 rounded-md p-4 hover:text-accent sm:size-8"
+                title="Theme: system"
+                aria-label="Theme: system"
                 aria-live="polite"
               >
-                <IconMoon class="absolute top-[50%] left-[50%] -translate-[50%] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-                <IconSunHigh class="absolute top-[50%] left-[50%] -translate-[50%] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+                <Icon
+                  icon={IconSunHigh}
+                  class="absolute top-[50%] left-[50%] -translate-[50%] scale-0 rotate-90 transition-all motion-reduce:transition-none [[data-theme-preference=light]_&]:scale-100 [[data-theme-preference=light]_&]:rotate-0"
+                />
+                <Icon
+                  icon={IconMonitor}
+                  class="absolute top-[50%] left-[50%] -translate-[50%] scale-100 rotate-0 transition-all motion-reduce:transition-none [[data-theme-preference=dark]_&]:scale-0 [[data-theme-preference=dark]_&]:-rotate-90 [[data-theme-preference=light]_&]:scale-0 [[data-theme-preference=light]_&]:rotate-90"
+                />
+                <Icon
+                  icon={IconMoon}
+                  class="absolute top-[50%] left-[50%] -translate-[50%] scale-0 -rotate-90 transition-all motion-reduce:transition-none [[data-theme-preference=dark]_&]:scale-100 [[data-theme-preference=dark]_&]:rotate-0"
+                />
               </button>
             </li>
           )

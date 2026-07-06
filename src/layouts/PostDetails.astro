@@ -1,7 +1,7 @@
 ---
 import { type CollectionEntry, render } from "astro:content";
-import IconChevronLeft from "@/assets/icons/IconChevronLeft.svg";
-import IconChevronRight from "@/assets/icons/IconChevronRight.svg";
+import IconCaretLeft from "@phosphor-icons/core/assets/regular/caret-left.svg";
+import IconCaretRight from "@phosphor-icons/core/assets/regular/caret-right.svg";
 import BackButton from "@/components/BackButton.astro";
 import BackToTopButton from "@/components/BackToTopButton.astro";
 import Datetime from "@/components/Datetime.astro";
@@ -9,6 +9,7 @@ import DraftBadge from "@/components/DraftBadge.astro";
 import EditPost from "@/components/EditPost.astro";
 import Footer from "@/components/Footer.astro";
 import Header from "@/components/Header.astro";
+import Icon from "@/components/Icon.astro";
 import ShareLinks from "@/components/ShareLinks.astro";
 import Tag from "@/components/Tag.astro";
 import { SITE } from "@/config";
@@ -99,7 +100,7 @@ const nextPost =
   >
     <h1
       transition:name={slugifyStr(title)}
-      class="inline-block text-2xl font-bold text-accent sm:text-3xl"
+      class="inline-block text-2xl font-semibold tracking-[-0.01em] text-foreground sm:text-3xl"
     >
       {title}
     </h1>
@@ -122,7 +123,7 @@ const nextPost =
       <Content />
     </article>
 
-    <hr class="my-8 border-dashed" />
+    <hr class="my-8" />
 
     <EditPost class="sm:hidden" {hideEditPost} {post} />
 
@@ -134,7 +135,7 @@ const nextPost =
 
     <ShareLinks />
 
-    <hr class="my-6 border-dashed" />
+    <hr class="my-6" />
 
     <!-- Previous/Next Post Buttons -->
     <div data-pagefind-ignore class="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -144,7 +145,10 @@ const nextPost =
             href={getPath(prevPost.id, prevPost.filePath)}
             class="flex w-full gap-1 hover:opacity-75"
           >
-            <IconChevronLeft class="inline-block flex-none rtl:rotate-180" />
+            <Icon
+              icon={IconCaretLeft}
+              class="inline-block flex-none rtl:rotate-180"
+            />
             <div>
               <span>Previous Post</span>
               <div class="text-sm text-accent/85">{prevPost.title}</div>
@@ -162,7 +166,10 @@ const nextPost =
               <span>Next Post</span>
               <div class="text-sm text-accent/85">{nextPost.title}</div>
             </div>
-            <IconChevronRight class="inline-block flex-none rtl:rotate-180" />
+            <Icon
+              icon={IconCaretRight}
+              class="inline-block flex-none rtl:rotate-180"
+            />
           </a>
         )
       }
@@ -175,14 +182,15 @@ const nextPost =
   /** Create a progress indicator
    *  at the top */
   function createProgressBar() {
-    // Create the main container div
+    // Create the main container div — no background strip; only the 2px
+    // accent bar itself is visible (quiet reading aid, docs/adr/0003).
     const progressContainer = document.createElement("div");
     progressContainer.className =
-      "progress-container fixed top-0 z-10 h-1 w-full bg-background";
+      "progress-container fixed top-0 z-10 h-0.5 w-full";
 
     // Create the progress bar div
     const progressBar = document.createElement("div");
-    progressBar.className = "progress-bar h-1 w-0 bg-accent";
+    progressBar.className = "progress-bar h-0.5 w-0 bg-accent";
     progressBar.id = "myBar";
 
     // Append the progress bar to the progress container
@@ -256,7 +264,7 @@ const nextPost =
         : "-top-3";
 
       const copyButton = document.createElement("button");
-      copyButton.className = `copy-code absolute end-3 ${topClass} rounded bg-muted border border-muted px-2 py-1 text-xs leading-4 text-foreground font-medium`;
+      copyButton.className = `copy-code absolute end-3 ${topClass} rounded-md border border-border bg-background/90 px-2 py-1 text-xs leading-4 font-medium text-muted-foreground backdrop-blur-sm hover:border-accent hover:text-accent`;
       copyButton.innerHTML = copyButtonLabel;
       codeBlock.setAttribute("tabindex", "0");
       codeBlock.appendChild(copyButton);
@@ -278,9 +286,11 @@ const nextPost =
 
       // visual feedback that task is completed
       button.innerText = "Copied";
+      button.classList.add("border-accent", "text-accent");
 
       setTimeout(() => {
         button.innerText = copyButtonLabel;
+        button.classList.remove("border-accent", "text-accent");
       }, 700);
     }
   }

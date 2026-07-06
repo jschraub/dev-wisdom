@@ -1,6 +1,13 @@
+import { readFileSync } from "node:fs";
 import satori from "satori";
 import { SITE } from "@/config";
 import loadGoogleFonts from "../loadGoogleFont";
+import { OG } from "./palette";
+
+// The signed-off brand mark, embedded so shared links carry it verbatim.
+const mark = `data:image/svg+xml;base64,${Buffer.from(
+	readFileSync(new URL("../../../public/favicon.svg", import.meta.url)),
+).toString("base64")}`;
 
 export default async () => {
 	return satori(
@@ -8,30 +15,22 @@ export default async () => {
 			type: "div",
 			props: {
 				style: {
-					background: "#fefbfb",
+					display: "flex",
+					flexDirection: "column",
 					width: "100%",
 					height: "100%",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					background: OG.background,
+					color: OG.foreground,
 				},
 				children: [
+					// Brand signature: the accent rule across the top.
 					{
 						type: "div",
 						props: {
 							style: {
-								position: "absolute",
-								top: "-1px",
-								right: "-1px",
-								border: "4px solid #000",
-								background: "#ecebeb",
-								opacity: "0.9",
-								borderRadius: "4px",
-								display: "flex",
-								justifyContent: "center",
-								margin: "2.5rem",
-								width: "88%",
-								height: "80%",
+								height: "12px",
+								width: "100%",
+								background: OG.accent,
 							},
 						},
 					},
@@ -39,92 +38,91 @@ export default async () => {
 						type: "div",
 						props: {
 							style: {
-								border: "4px solid #000",
-								background: "#fefbfb",
-								borderRadius: "4px",
 								display: "flex",
-								justifyContent: "center",
-								margin: "2rem",
-								width: "88%",
-								height: "80%",
+								flexDirection: "column",
+								justifyContent: "space-between",
+								flexGrow: 1,
+								padding: "56px 72px 56px",
 							},
-							children: {
-								type: "div",
-								props: {
-									style: {
-										display: "flex",
-										flexDirection: "column",
-										justifyContent: "space-between",
-										margin: "20px",
-										width: "90%",
-										height: "90%",
+							children: [
+								// Brand row: mark + hostname.
+								{
+									type: "div",
+									props: {
+										style: {
+											display: "flex",
+											alignItems: "center",
+											gap: "14px",
+										},
+										children: [
+											{
+												type: "img",
+												props: {
+													src: mark,
+													width: 30,
+													height: 30,
+												},
+											},
+											{
+												type: "span",
+												props: {
+													style: { fontSize: 28, color: OG.muted },
+													children: new URL(SITE.website).hostname,
+												},
+											},
+										],
 									},
-									children: [
-										{
-											type: "div",
-											props: {
-												style: {
-													display: "flex",
-													flexDirection: "column",
-													justifyContent: "center",
-													alignItems: "center",
-													height: "90%",
-													maxHeight: "90%",
-													overflow: "hidden",
-													textAlign: "center",
-												},
-												children: [
-													{
-														type: "p",
-														props: {
-															style: { fontSize: 72, fontWeight: "bold" },
-															children: SITE.title,
-														},
-													},
-													{
-														type: "p",
-														props: {
-															style: {
-																fontSize: 36,
-																fontWeight: "bold",
-																color: "#006cac",
-																marginTop: "-8px",
-															},
-															children: SITE.tagline,
-														},
-													},
-													{
-														type: "p",
-														props: {
-															style: { fontSize: 26, lineHeight: 1.4 },
-															children: SITE.desc,
-														},
-													},
-												],
-											},
-										},
-										{
-											type: "div",
-											props: {
-												style: {
-													display: "flex",
-													justifyContent: "flex-end",
-													width: "100%",
-													marginBottom: "8px",
-													fontSize: 28,
-												},
-												children: {
-													type: "span",
-													props: {
-														style: { overflow: "hidden", fontWeight: "bold" },
-														children: new URL(SITE.website).hostname,
-													},
-												},
-											},
-										},
-									],
 								},
-							},
+								// Identity block.
+								{
+									type: "div",
+									props: {
+										style: {
+											display: "flex",
+											flexDirection: "column",
+										},
+										children: [
+											{
+												type: "p",
+												props: {
+													style: {
+														fontSize: 76,
+														fontWeight: 600,
+														letterSpacing: "-0.01em",
+														margin: 0,
+													},
+													children: SITE.title,
+												},
+											},
+											{
+												type: "p",
+												props: {
+													style: {
+														fontSize: 34,
+														fontWeight: 600,
+														color: OG.accent,
+														margin: "10px 0 0",
+													},
+													children: SITE.tagline,
+												},
+											},
+										],
+									},
+								},
+								// Description.
+								{
+									type: "p",
+									props: {
+										style: {
+											fontSize: 28,
+											lineHeight: 1.5,
+											color: OG.muted,
+											margin: 0,
+										},
+										children: SITE.desc,
+									},
+								},
+							],
 						},
 					},
 				],
@@ -135,7 +133,7 @@ export default async () => {
 			height: 630,
 			embedFont: true,
 			fonts: await loadGoogleFonts(
-				SITE.title + SITE.tagline + SITE.desc + SITE.website,
+				SITE.title + SITE.tagline + SITE.desc + new URL(SITE.website).hostname,
 			),
 		},
 	);

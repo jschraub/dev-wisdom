@@ -5,6 +5,11 @@
 	.app-prose {
 		@apply prose;
 
+		/* Long-form tuning: ~17px body on a relaxed leading; prose children
+		   scale with em so the whole scale follows. */
+		font-size: 1.0625rem;
+		line-height: 1.72;
+
 		h1,
 		h2,
 		h3,
@@ -13,8 +18,18 @@
 			@apply mb-3 text-foreground;
 		}
 
-		h3 {
-			@apply italic;
+		/* Geist ships at 400–600 — pin headings to semibold so the plugin's
+		   700/800 defaults never trigger synthetic bold. */
+		h1,
+		h2,
+		h3,
+		h4 {
+			@apply font-semibold text-balance;
+		}
+
+		h1,
+		h2 {
+			@apply tracking-[-0.01em];
 		}
 
 		p,
@@ -28,7 +43,7 @@
 		}
 
 		a {
-			@apply wrap-break-word text-foreground decoration-dashed underline-offset-4 hover:text-accent focus-visible:no-underline;
+			@apply wrap-break-word text-accent decoration-accent/40 underline-offset-4 hover:text-accent-hover hover:decoration-accent-hover focus-visible:no-underline;
 		}
 
 		ul {
@@ -67,7 +82,7 @@
 		}
 
 		code {
-			@apply rounded bg-muted/75 p-1 wrap-break-word text-foreground before:content-none after:content-none;
+			@apply rounded border border-border bg-muted/75 px-1 py-0.5 wrap-break-word text-foreground before:content-none after:content-none;
 		}
 
 		.astro-code code {
@@ -83,42 +98,54 @@
 		}
 
 		summary {
-			@apply focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent focus-visible:outline-dashed;
+			@apply focus-visible:no-underline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent;
 		}
 
 		pre {
-			@apply focus-visible:border-transparent focus-visible:outline-2 focus-visible:outline-accent focus-visible:outline-dashed;
+			@apply focus-visible:border-transparent focus-visible:outline-2 focus-visible:outline-accent;
 		}
 
 		/* Katex text color */
 		.katex-display {
 			@apply text-foreground;
 		}
+
+		/* The single gold sentence per article (docs/adr/0003): authored as
+		   <mark> in Markdown. Tint only — text stays ink, so contrast tracks
+		   the body copy in both themes. */
+		mark {
+			@apply rounded-sm bg-gold/20 box-decoration-clone px-1 text-foreground;
+		}
 	}
 
 	/* ===== Code Blocks & Syntax Highlighting ===== */
+	/* Background pinned to the panel token (not Shiki's bg vars) so code
+	   blocks track the design system by construction. */
 	.astro-code {
-		@apply flex border bg-(--shiki-light-bg) text-(--shiki-light) outline-border [&_span]:text-(--shiki-light);
+		@apply flex border bg-muted text-(--shiki-light) outline-border [&_span]:text-(--shiki-light);
 	}
 
 	html[data-theme="dark"] .astro-code {
-		@apply bg-(--shiki-dark-bg) text-(--shiki-dark) [&_span]:text-(--shiki-dark);
+		@apply text-(--shiki-dark) [&_span]:text-(--shiki-dark);
 	}
 
 	/* Styles for Shiki transformers */
 	/* https://shiki.style/packages/transformers */
 	.astro-code {
+		/* Diff semantics stay pure green/red (yellower and more saturated than
+		   the jade accent, plus the full-width tint and +/- marker). */
 		.line.diff.add {
-			@apply relative inline-block w-full bg-green-400/20 before:absolute before:-left-3 before:text-green-500 before:content-['+'];
+			@apply relative inline-block w-full bg-green-500/15 before:absolute before:-left-3 before:text-green-600 dark:before:text-green-400 before:content-['+'];
 		}
 		.line.diff.remove {
-			@apply relative inline-block w-full bg-red-500/20 before:absolute before:-left-3 before:text-red-500 before:content-['-'];
+			@apply relative inline-block w-full bg-red-500/15 before:absolute before:-left-3 before:text-red-500 before:content-['-'];
 		}
+		/* Highlights are gold — same job as <mark> in prose (docs/adr/0003). */
 		.line.highlighted {
-			@apply inline-block w-full bg-slate-400/20;
+			@apply inline-block w-full bg-gold/15;
 		}
 		.highlighted-word {
-			@apply rounded-sm border border-border px-0.5 py-px;
+			@apply rounded-sm border border-gold/45 bg-gold/10 px-0.5 py-px;
 		}
 	}
 }

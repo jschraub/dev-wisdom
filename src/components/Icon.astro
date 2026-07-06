@@ -1,0 +1,19 @@
+---
+/**
+ * Icon primitive for Phosphor SVGs imported from @phosphor-icons/core.
+ * Bakes the site's icon conventions in one place — decorative by default
+ * (aria-hidden) and 24px unless overridden — instead of copying them into
+ * vendored SVG files. The trailing spread lets call sites override any
+ * default (e.g. width/height, aria-* when an icon is meaningful).
+ */
+import type { HTMLAttributes } from "astro/types";
+
+type Props = HTMLAttributes<"svg"> & {
+	/** An SVG component import, e.g. `@phosphor-icons/core/assets/regular/moon.svg`. */
+	icon: (_props: HTMLAttributes<"svg">) => Element;
+};
+
+const { icon: Svg, ...attrs } = Astro.props;
+---
+
+<Svg width={24} height={24} aria-hidden="true" {...attrs} />

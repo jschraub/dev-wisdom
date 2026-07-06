@@ -34,18 +34,21 @@ async function loadGoogleFonts(
 ): Promise<
 	Array<{ name: string; data: ArrayBuffer; weight: number; style: string }>
 > {
+	// Geist, matching the site type system (docs/adr/0003). 400 for body
+	// text, 600 because Geist ships 400–600 — same "semibold ceiling" rule
+	// the prose styles follow; anything heavier would synthesize.
 	const fontsConfig = [
 		{
-			name: "IBM Plex Mono",
-			font: "IBM+Plex+Mono",
+			name: "Geist",
+			font: "Geist",
 			weight: 400,
 			style: "normal",
 		},
 		{
-			name: "IBM Plex Mono",
-			font: "IBM+Plex+Mono",
-			weight: 700,
-			style: "bold",
+			name: "Geist",
+			font: "Geist",
+			weight: 600,
+			style: "normal",
 		},
 	];
 

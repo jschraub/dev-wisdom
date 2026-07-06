@@ -1,12 +1,12 @@
+import IconEnvelope from "@phosphor-icons/core/assets/regular/envelope.svg";
+import IconFacebook from "@phosphor-icons/core/assets/regular/facebook-logo.svg";
+import IconGitHub from "@phosphor-icons/core/assets/regular/github-logo.svg";
+import IconLinkedin from "@phosphor-icons/core/assets/regular/linkedin-logo.svg";
+import IconPinterest from "@phosphor-icons/core/assets/regular/pinterest-logo.svg";
+import IconTelegram from "@phosphor-icons/core/assets/regular/telegram-logo.svg";
+import IconWhatsapp from "@phosphor-icons/core/assets/regular/whatsapp-logo.svg";
+import IconBrandX from "@phosphor-icons/core/assets/regular/x-logo.svg";
 import type { Props } from "astro";
-import IconBrandX from "@/assets/icons/IconBrandX.svg";
-import IconFacebook from "@/assets/icons/IconFacebook.svg";
-import IconGitHub from "@/assets/icons/IconGitHub.svg";
-import IconLinkedin from "@/assets/icons/IconLinkedin.svg";
-import IconMail from "@/assets/icons/IconMail.svg";
-import IconPinterest from "@/assets/icons/IconPinterest.svg";
-import IconTelegram from "@/assets/icons/IconTelegram.svg";
-import IconWhatsapp from "@/assets/icons/IconWhatsapp.svg";
 import { SITE } from "@/config";
 
 interface Social {
@@ -39,7 +39,7 @@ export const SOCIALS: Social[] = [
 		name: "Mail",
 		href: "mailto:jaredschraub@outlook.com",
 		linkTitle: `Send an email to ${SITE.title}`,
-		icon: IconMail,
+		icon: IconEnvelope,
 	},
 ] as const;
 
@@ -78,6 +78,6 @@ export const SHARE_LINKS: Social[] = [
 		name: "Mail",
 		href: "mailto:?subject=See%20this%20post&body=",
 		linkTitle: `Share this post via email`,
-		icon: IconMail,
+		icon: IconEnvelope,
 	},
 ] as const;
