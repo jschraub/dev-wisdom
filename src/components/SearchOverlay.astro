@@ -139,24 +139,33 @@ import "@/styles/pagefind.css";
 
   // Event delegation on document — survives Astro view transitions without
   // any rebinding (the dialog/button elements are fresh after each swap).
-  document.addEventListener("click", (event) => {
-    const target = event.target as HTMLElement | null;
+  // Capture phase is load-bearing: Astro's ClientRouter also delegates
+  // clicks on document (bubble phase, registered earlier from <head>), and
+  // it navigates unless `defaultPrevented` is already set when its handler
+  // runs. Capture always precedes bubble, so our preventDefault wins and
+  // the router bails instead of navigating to /search.
+  document.addEventListener(
+    "click",
+    (event) => {
+      const target = event.target as HTMLElement | null;
 
-    const button = target?.closest<HTMLElement>("#search-btn");
-    if (button) {
-      event.preventDefault();
-      openOverlay(button);
-      return;
-    }
+      const button = target?.closest<HTMLElement>("#search-btn");
+      if (button) {
+        event.preventDefault();
+        openOverlay(button);
+        return;
+      }
 
-    // A click on the dialog element itself (not its children) is a click on
-    // the backdrop area.
-    if (target === getDialog()) closeOverlay();
+      // A click on the dialog element itself (not its children) is a click
+      // on the backdrop area.
+      if (target === getDialog()) closeOverlay();
 
-    // Navigating to a result closes the overlay (non-transition navigations
-    // would anyway; view transitions keep the document alive).
-    if (target?.closest(".pagefind-ui__result-link")) closeOverlay();
-  });
+      // Navigating to a result closes the overlay (non-transition
+      // navigations would anyway; view transitions keep the document alive).
+      if (target?.closest(".pagefind-ui__result-link")) closeOverlay();
+    },
+    { capture: true },
+  );
 
   document.addEventListener("keydown", (event) => {
     const dialog = getDialog();
