@@ -3,6 +3,7 @@ import { Font } from "astro:assets";
 import { PUBLIC_GOOGLE_SITE_VERIFICATION } from "astro:env/client";
 import { ClientRouter } from "astro:transitions";
 import { SITE } from "@/config";
+import { DARK_SCHEME_QUERY, THEME_STORAGE_KEY } from "@/scripts/themeState";
 import "@/styles/global.css";
 
 type Props = {
@@ -143,33 +144,34 @@ const structuredData = {
 
     <ClientRouter />
 
-    <!-- Minimal inline script to prevent FOUC - sets theme immediately -->
-    <script is:inline>
+    <!-- Minimal first-paint script: resolves preference → applied theme and
+         stamps both on <html> before anything renders, so there is no flash
+         of the wrong theme. Storage key and media query come from the theme
+         state machine module (src/scripts/themeState.ts) via define:vars;
+         the full three-state logic lives there and in scripts/theme.ts. -->
+    <script
+      is:inline
+      define:vars={{ THEME_STORAGE_KEY, DARK_SCHEME_QUERY }}
+    >
       (function () {
-        const initialColorScheme = ""; // "light" | "dark"
-        const currentTheme = localStorage.getItem("theme");
-
-        function getPreferTheme() {
-          if (currentTheme) return currentTheme;
-          if (initialColorScheme) return initialColorScheme;
-          return window.matchMedia("(prefers-color-scheme: dark)").matches
-            ? "dark"
-            : "light";
+        let stored = null;
+        try {
+          stored = localStorage.getItem(THEME_STORAGE_KEY);
+        } catch {
+          /* storage unavailable — fall through to system */
         }
+        const preference =
+          stored === "light" || stored === "dark" ? stored : "system";
+        const applied =
+          preference === "system"
+            ? window.matchMedia(DARK_SCHEME_QUERY).matches
+              ? "dark"
+              : "light"
+            : preference;
 
-        const themeValue = getPreferTheme();
-
-        // Set theme immediately to prevent flash
-        document.firstElementChild?.setAttribute("data-theme", themeValue);
-
-        // Export minimal API for external script
-        window.theme = {
-          themeValue: themeValue,
-          getTheme: () => window.theme.themeValue,
-          setTheme: val => {
-            window.theme.themeValue = val;
-          },
-        };
+        const root = document.documentElement;
+        root.setAttribute("data-theme", applied);
+        root.setAttribute("data-theme-preference", preference);
       })();
     </script>
   </head>

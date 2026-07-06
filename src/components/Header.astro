@@ -1,6 +1,7 @@
 ---
 import IconArchive from "@/assets/icons/IconArchive.svg";
 import IconMenuDeep from "@/assets/icons/IconMenuDeep.svg";
+import IconMonitor from "@/assets/icons/IconMonitor.svg";
 import IconMoon from "@/assets/icons/IconMoon.svg";
 import IconSearch from "@/assets/icons/IconSearch.svg";
 import IconSunHigh from "@/assets/icons/IconSunHigh.svg";
@@ -123,15 +124,21 @@ const isActive = (path: string) => {
         {
           SITE.lightAndDarkMode && (
             <li class="col-span-1 flex items-center justify-center">
+              {/* Cycles light → system → dark (src/scripts/theme.ts).
+                  Icon shown = current *preference*, keyed off the
+                  data-theme-preference attribute on <html>. Monitor is the
+                  base state so it also renders without JS. aria-live lets
+                  the aria-label mutation announce each change. */}
               <button
                 id="theme-btn"
                 class="relative size-12 rounded-md p-4 hover:text-accent sm:size-8"
-                title="Toggles light & dark"
-                aria-label="auto"
+                title="Theme: system"
+                aria-label="Theme: system"
                 aria-live="polite"
               >
-                <IconMoon class="absolute top-[50%] left-[50%] -translate-[50%] scale-100 rotate-0 transition-all motion-reduce:transition-none dark:scale-0 dark:-rotate-90" />
-                <IconSunHigh class="absolute top-[50%] left-[50%] -translate-[50%] scale-0 rotate-90 transition-all motion-reduce:transition-none dark:scale-100 dark:rotate-0" />
+                <IconSunHigh class="absolute top-[50%] left-[50%] -translate-[50%] scale-0 rotate-90 transition-all motion-reduce:transition-none [[data-theme-preference=light]_&]:scale-100 [[data-theme-preference=light]_&]:rotate-0" />
+                <IconMonitor class="absolute top-[50%] left-[50%] -translate-[50%] scale-100 rotate-0 transition-all motion-reduce:transition-none [[data-theme-preference=dark]_&]:scale-0 [[data-theme-preference=dark]_&]:-rotate-90 [[data-theme-preference=light]_&]:scale-0 [[data-theme-preference=light]_&]:rotate-90" />
+                <IconMoon class="absolute top-[50%] left-[50%] -translate-[50%] scale-0 -rotate-90 transition-all motion-reduce:transition-none [[data-theme-preference=dark]_&]:scale-100 [[data-theme-preference=dark]_&]:rotate-0" />
               </button>
             </li>
           )
