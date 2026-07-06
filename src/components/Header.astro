@@ -6,6 +6,7 @@ import IconMonitor from "@phosphor-icons/core/assets/regular/monitor.svg";
 import IconMoon from "@phosphor-icons/core/assets/regular/moon.svg";
 import IconSunHigh from "@phosphor-icons/core/assets/regular/sun.svg";
 import IconX from "@phosphor-icons/core/assets/regular/x.svg";
+import BrandCheck from "@/assets/brand-check.svg";
 import { SITE } from "@/config";
 import Icon from "./Icon.astro";
 import LinkButton from "./LinkButton.astro";
@@ -49,21 +50,7 @@ const isActive = (path: string) => {
       class="absolute py-1 text-xl leading-8 font-semibold tracking-[-0.01em] whitespace-nowrap sm:static sm:my-auto sm:text-2xl sm:leading-none"
     >
       {SITE.title}{" "}
-      {/* The brand mark's gold check-as-period — same gesture as the favicon
-          and OG brand row (ADR 0003 amendment, issue #11). */}
-      <svg
-        viewBox="0 0 26 22"
-        class="inline-block size-[0.5em] text-gold"
-        aria-hidden="true"
-        fill="none"
-      >
-        <path
-          d="M2 12 L9 19 L24 3"
-          stroke="currentColor"
-          stroke-width="5"
-          stroke-linecap="round"
-          stroke-linejoin="round"></path>
-      </svg>
+      <Icon icon={BrandCheck} class="inline-block size-[0.5em] text-gold" />
     </a>
     <nav
       id="nav-menu"
