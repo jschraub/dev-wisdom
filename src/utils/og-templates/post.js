@@ -1,97 +1,13 @@
+import { readFileSync } from "node:fs";
 import satori from "satori";
-// import { html } from "satori-html";
 import { SITE } from "@/config";
 import loadGoogleFonts from "../loadGoogleFont";
+import { OG } from "./palette";
 
-// const markup = html`<div
-//       style={{
-//         background: "#fefbfb",
-//         width: "100%",
-//         height: "100%",
-//         display: "flex",
-//         alignItems: "center",
-//         justifyContent: "center",
-//       }}
-//     >
-//       <div
-//         style={{
-//           position: "absolute",
-//           top: "-1px",
-//           right: "-1px",
-//           border: "4px solid #000",
-//           background: "#ecebeb",
-//           opacity: "0.9",
-//           borderRadius: "4px",
-//           display: "flex",
-//           justifyContent: "center",
-//           margin: "2.5rem",
-//           width: "88%",
-//           height: "80%",
-//         }}
-//       />
-
-//       <div
-//         style={{
-//           border: "4px solid #000",
-//           background: "#fefbfb",
-//           borderRadius: "4px",
-//           display: "flex",
-//           justifyContent: "center",
-//           margin: "2rem",
-//           width: "88%",
-//           height: "80%",
-//         }}
-//       >
-//         <div
-//           style={{
-//             display: "flex",
-//             flexDirection: "column",
-//             justifyContent: "space-between",
-//             margin: "20px",
-//             width: "90%",
-//             height: "90%",
-//           }}
-//         >
-//           <p
-//             style={{
-//               fontSize: 72,
-//               fontWeight: "bold",
-//               maxHeight: "84%",
-//               overflow: "hidden",
-//             }}
-//           >
-//             {post.data.title}
-//           </p>
-//           <div
-//             style={{
-//               display: "flex",
-//               justifyContent: "space-between",
-//               width: "100%",
-//               marginBottom: "8px",
-//               fontSize: 28,
-//             }}
-//           >
-//             <span>
-//               by{" "}
-//               <span
-//                 style={{
-//                   color: "transparent",
-//                 }}
-//               >
-//                 "
-//               </span>
-//               <span style={{ overflow: "hidden", fontWeight: "bold" }}>
-//                 {post.data.author}
-//               </span>
-//             </span>
-
-//             <span style={{ overflow: "hidden", fontWeight: "bold" }}>
-//               {SITE.title}
-//             </span>
-//           </div>
-//         </div>
-//       </div>
-//     </div>`;
+// The signed-off brand mark, embedded so shared links carry it verbatim.
+const mark = `data:image/svg+xml;base64,${Buffer.from(
+	readFileSync(new URL("../../../public/favicon.svg", import.meta.url)),
+).toString("base64")}`;
 
 export default async (post) => {
 	return satori(
@@ -99,30 +15,22 @@ export default async (post) => {
 			type: "div",
 			props: {
 				style: {
-					background: "#fefbfb",
+					display: "flex",
+					flexDirection: "column",
 					width: "100%",
 					height: "100%",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "center",
+					background: OG.background,
+					color: OG.foreground,
 				},
 				children: [
+					// Brand signature: the accent rule across the top.
 					{
 						type: "div",
 						props: {
 							style: {
-								position: "absolute",
-								top: "-1px",
-								right: "-1px",
-								border: "4px solid #000",
-								background: "#ecebeb",
-								opacity: "0.9",
-								borderRadius: "4px",
-								display: "flex",
-								justifyContent: "center",
-								margin: "2.5rem",
-								width: "88%",
-								height: "80%",
+								height: "12px",
+								width: "100%",
+								background: OG.accent,
 							},
 						},
 					},
@@ -130,88 +38,95 @@ export default async (post) => {
 						type: "div",
 						props: {
 							style: {
-								border: "4px solid #000",
-								background: "#fefbfb",
-								borderRadius: "4px",
 								display: "flex",
-								justifyContent: "center",
-								margin: "2rem",
-								width: "88%",
-								height: "80%",
+								flexDirection: "column",
+								justifyContent: "space-between",
+								flexGrow: 1,
+								padding: "56px 72px 56px",
 							},
-							children: {
-								type: "div",
-								props: {
-									style: {
-										display: "flex",
-										flexDirection: "column",
-										justifyContent: "space-between",
-										margin: "20px",
-										width: "90%",
-										height: "90%",
+							children: [
+								// Brand row: mark + hostname.
+								{
+									type: "div",
+									props: {
+										style: {
+											display: "flex",
+											alignItems: "center",
+											gap: "14px",
+										},
+										children: [
+											{
+												type: "img",
+												props: {
+													src: mark,
+													width: 30,
+													height: 30,
+												},
+											},
+											{
+												type: "span",
+												props: {
+													style: { fontSize: 28, color: OG.muted },
+													children: new URL(SITE.website).hostname,
+												},
+											},
+										],
 									},
-									children: [
-										{
+								},
+								// Title.
+								{
+									type: "div",
+									props: {
+										style: {
+											display: "flex",
+											maxHeight: "63%",
+											overflow: "hidden",
+										},
+										children: {
 											type: "p",
 											props: {
 												style: {
-													fontSize: 72,
-													fontWeight: "bold",
-													maxHeight: "84%",
-													overflow: "hidden",
+													fontSize: 64,
+													fontWeight: 600,
+													lineHeight: 1.18,
+													letterSpacing: "-0.01em",
+													margin: 0,
 												},
 												children: post.data.title,
 											},
 										},
-										{
-											type: "div",
-											props: {
-												style: {
-													display: "flex",
-													justifyContent: "space-between",
-													width: "100%",
-													marginBottom: "8px",
-													fontSize: 28,
-												},
-												children: [
-													{
-														type: "span",
-														props: {
-															children: [
-																"by ",
-																{
-																	type: "span",
-																	props: {
-																		style: { color: "transparent" },
-																		children: '"',
-																	},
-																},
-																{
-																	type: "span",
-																	props: {
-																		style: {
-																			overflow: "hidden",
-																			fontWeight: "bold",
-																		},
-																		children: post.data.author,
-																	},
-																},
-															],
-														},
-													},
-													{
-														type: "span",
-														props: {
-															style: { overflow: "hidden", fontWeight: "bold" },
-															children: SITE.title,
-														},
-													},
-												],
-											},
-										},
-									],
+									},
 								},
-							},
+								// Attribution row: author left, tagline right.
+								{
+									type: "div",
+									props: {
+										style: {
+											display: "flex",
+											justifyContent: "space-between",
+											alignItems: "center",
+											width: "100%",
+											fontSize: 28,
+										},
+										children: [
+											{
+												type: "span",
+												props: {
+													style: { color: OG.muted },
+													children: `by ${post.data.author}`,
+												},
+											},
+											{
+												type: "span",
+												props: {
+													style: { color: OG.accent, fontWeight: 600 },
+													children: SITE.tagline,
+												},
+											},
+										],
+									},
+								},
+							],
 						},
 					},
 				],
@@ -222,7 +137,7 @@ export default async (post) => {
 			height: 630,
 			embedFont: true,
 			fonts: await loadGoogleFonts(
-				`${post.data.title}${post.data.author}${SITE.title}by`,
+				`${post.data.title}${post.data.author}${SITE.tagline}${new URL(SITE.website).hostname}by `,
 			),
 		},
 	);

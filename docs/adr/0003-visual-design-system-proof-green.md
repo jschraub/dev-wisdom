@@ -116,3 +116,20 @@ Negative / accepted trade-offs:
   the drop-in replacement evaluated alongside it.
 - Pagefind UI/API changes on upgrade → the modal wraps the same index; only
   the wrapper should need touching.
+
+## Amendment — 2026-07-06: gold on the brand mark (issue #11)
+
+The original scoping read "gold … never on links, controls, chrome, or the
+brand mark." During slice 7 sign-off I chose a mark that breaks the last item
+deliberately: the favicon is the JS monogram on the spruce plate with a
+**gold check-as-period** — it reads "JS." at 16 px (the check collapses into
+a literal period) and "JS ✓" at 32 px and above. The check is the *proof*
+gesture, which is exactly the "one moment that matters" role gold plays
+everywhere else in the system; after exploring strictly-green options
+(monogram-only, proof-check-only, plateless variants), the signed monogram
+carried the thesis best.
+
+Scope of the exception: **the mark and its brand-surface embeddings** — the
+favicon, the OG brand row, and the header wordmark's check-as-period. Links,
+controls, and the rest of the chrome remain gold-free; the scarcity rules for
+Featured marks and the per-article `<mark>` are unchanged.
