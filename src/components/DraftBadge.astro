@@ -6,10 +6,12 @@ type Props = {
 const { class: className = "" } = Astro.props;
 ---
 
+{/* Deliberately neutral — gold is reserved for Featured marks and the
+    one <mark> highlight per article (docs/adr/0003). */}
 <span
   class:list={[
-    "inline-block rounded border border-amber-500/40 bg-amber-500/10 px-1.5 py-0.5",
-    "text-xs font-medium tracking-wide text-amber-700 uppercase dark:text-amber-400",
+    "inline-block rounded border border-border bg-muted px-1.5 py-0.5",
+    "text-xs font-medium tracking-wide text-muted-foreground uppercase",
     className,
   ]}
   title="This post is a draft. It is not publicly listed."

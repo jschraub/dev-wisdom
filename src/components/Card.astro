@@ -1,9 +1,11 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import IconStarDuotone from "@phosphor-icons/core/assets/duotone/star-duotone.svg";
 import { getPath } from "@/utils/getPath";
 import { slugifyStr } from "@/utils/slugify";
 import Datetime from "./Datetime.astro";
 import DraftBadge from "./DraftBadge.astro";
+import Icon from "./Icon.astro";
 
 type Props = {
 	variant?: "h2" | "h3";
@@ -11,17 +13,25 @@ type Props = {
 
 const { variant: Heading = "h2", id, data, filePath } = Astro.props;
 
-const { title, description, draft, ...props } = data;
+const { title, description, draft, featured, ...props } = data;
 ---
 
-<li class="my-6">
+<li
+  class="my-2 -mx-3 rounded-lg border border-transparent p-3 transition-colors hover:border-border motion-reduce:transition-none"
+>
+  {
+    featured && (
+      <span class="mb-0.5 flex items-center gap-1 text-xs font-medium tracking-wide text-gold uppercase">
+        {/* The site's only duotone icon — reserved for gold moments
+            (docs/adr/0003). */}
+        <Icon icon={IconStarDuotone} class="size-4" />
+        Featured
+      </span>
+    )
+  }
   <a
     href={getPath(id, filePath)}
-    class:list={[
-      "inline-block text-lg font-medium text-accent",
-      "decoration-dashed underline-offset-4 hover:underline",
-      "focus-visible:no-underline focus-visible:underline-offset-0",
-    ]}
+    class="inline-block text-lg font-medium text-foreground transition-colors hover:text-accent focus-visible:text-accent motion-reduce:transition-none"
   >
     <Heading style={{ viewTransitionName: slugifyStr(title) }}>
       {title}
@@ -29,5 +39,5 @@ const { title, description, draft, ...props } = data;
   </a>
   {draft && <DraftBadge class="ms-2 align-middle" />}
   <Datetime {...props} />
-  <p>{description}</p>
+  <p class="mt-1">{description}</p>
 </li>

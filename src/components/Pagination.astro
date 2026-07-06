@@ -16,7 +16,7 @@ const { page } = Astro.props;
 {
   page.lastPage > 1 && (
     <nav
-      class="mt-auto mb-8 flex justify-center"
+      class="mt-auto mb-8 flex items-center justify-center"
       role="navigation"
       aria-label="Pagination Navigation"
     >
@@ -29,7 +29,9 @@ const { page } = Astro.props;
         <Icon icon={IconArrowLeft} class="inline-block rtl:rotate-180" />
         Prev
       </LinkButton>
-      {page.currentPage} / {page.lastPage}
+      <span class="font-mono text-sm text-muted-foreground">
+        {page.currentPage} / {page.lastPage}
+      </span>
       <LinkButton
         disabled={!page.url.next}
         href={page.url.next as string}

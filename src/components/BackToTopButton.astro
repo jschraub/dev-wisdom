@@ -9,15 +9,15 @@ import Icon from "./Icon.astro";
   class:list={[
     "fixed end-4 bottom-8 z-50",
     "md:sticky md:end-auto md:float-end md:me-1",
-    "translate-y-14 opacity-0 transition duration-500",
+    "translate-y-14 opacity-0 transition duration-500 motion-reduce:transition-none",
   ]}
 >
   <button
     data-button="back-to-top"
     class:list={[
-      "group relative bg-background px-2 py-1",
-      "size-14 rounded-full shadow-xl",
-      "md:h-8 md:w-fit md:rounded-md md:shadow-none md:focus-visible:rounded-none",
+      "group relative bg-background px-2 py-1 text-muted-foreground hover:text-accent",
+      "size-14 rounded-full border border-border shadow-md",
+      "md:h-8 md:w-fit md:rounded-md md:border-0 md:shadow-none md:focus-visible:rounded-none",
       "md:bg-background/35 md:bg-clip-padding md:backdrop-blur-lg",
     ]}
   >

@@ -123,7 +123,7 @@ const nextPost =
       <Content />
     </article>
 
-    <hr class="my-8 border-dashed" />
+    <hr class="my-8" />
 
     <EditPost class="sm:hidden" {hideEditPost} {post} />
 
@@ -135,7 +135,7 @@ const nextPost =
 
     <ShareLinks />
 
-    <hr class="my-6 border-dashed" />
+    <hr class="my-6" />
 
     <!-- Previous/Next Post Buttons -->
     <div data-pagefind-ignore class="grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -182,14 +182,15 @@ const nextPost =
   /** Create a progress indicator
    *  at the top */
   function createProgressBar() {
-    // Create the main container div
+    // Create the main container div — no background strip; only the 2px
+    // accent bar itself is visible (quiet reading aid, docs/adr/0003).
     const progressContainer = document.createElement("div");
     progressContainer.className =
-      "progress-container fixed top-0 z-10 h-1 w-full bg-background";
+      "progress-container fixed top-0 z-10 h-0.5 w-full";
 
     // Create the progress bar div
     const progressBar = document.createElement("div");
-    progressBar.className = "progress-bar h-1 w-0 bg-accent";
+    progressBar.className = "progress-bar h-0.5 w-0 bg-accent";
     progressBar.id = "myBar";
 
     // Append the progress bar to the progress container
