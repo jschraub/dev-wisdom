@@ -1,0 +1,201 @@
+---
+/**
+ * ⌘K command-palette search: a native <dialog> wrapping the Pagefind index.
+ * Rendered once per page by Layout so the shortcuts work everywhere; the
+ * header search link (#search-btn) is progressively enhanced to open it.
+ * Pagefind's JS and CSS load lazily on first open only. See issue #9.
+ */
+import "@/styles/pagefind.css";
+---
+
+<dialog
+  id="search-overlay"
+  aria-label="Search"
+  class="pagefind-tokens m-auto mt-[10dvh] w-[min(40rem,92vw)] rounded-lg border border-border bg-background p-0 text-foreground shadow-xl"
+>
+  <div class="flex max-h-[70dvh] flex-col">
+    <div id="search-overlay-container" class="overflow-y-auto p-4"></div>
+    <p
+      class="m-0 flex items-center gap-3 border-t border-border px-4 py-2 text-xs text-muted-foreground"
+    >
+      <span>
+        <kbd
+          id="search-kbd-hint"
+          class="rounded-sm border border-border bg-muted px-1.5 py-0.5 font-sans"
+          >⌘K</kbd
+        > to toggle
+      </span>
+      <span>
+        <kbd class="rounded-sm border border-border bg-muted px-1.5 py-0.5 font-sans"
+          >Esc</kbd
+        > to close
+      </span>
+    </p>
+  </div>
+</dialog>
+
+<style>
+  /* Subtle entrance only (close is instant — discrete `display` transitions
+     aren't worth the complexity), and none at all for reduced motion. */
+  #search-overlay[open] {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 0.15s ease-out,
+      transform 0.15s ease-out;
+
+    @starting-style {
+      opacity: 0;
+      transform: translateY(-0.5rem);
+    }
+  }
+
+  #search-overlay::backdrop {
+    background-color: rgb(0 0 0 / 0.45);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #search-overlay[open] {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  // `?url` keeps Pagefind's stylesheet out of the page's eager CSS (Astro
+  // hoists CSS from dynamic imports into <link> tags otherwise); the file
+  // itself is only fetched when the overlay first opens.
+  import uiCssHref from "@pagefind/default-ui/css/ui.css?url";
+
+  let invoker: HTMLElement | null = null;
+
+  const getDialog = () =>
+    document.getElementById("search-overlay") as HTMLDialogElement | null;
+
+  function loadUiCss(): Promise<void> {
+    // Check the DOM, not a flag: view transitions replace <head>, dropping
+    // the injected link. Re-injecting hits the browser cache.
+    if (document.querySelector(`link[href="${uiCssHref}"]`)) {
+      return Promise.resolve();
+    }
+    return new Promise((resolve) => {
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = uiCssHref;
+      link.onload = () => resolve();
+      link.onerror = () => resolve();
+      document.head.append(link);
+    });
+  }
+
+  async function ensureSearchUI(): Promise<void> {
+    const container = document.getElementById("search-overlay-container");
+    // Re-init after view transitions (fresh DOM) — the dynamic import is
+    // module-cached, so Pagefind's assets still load only once per visit.
+    if (!container || container.querySelector("form")) return;
+
+    const [{ PagefindUI }] = await Promise.all([
+      // @ts-expect-error — no types shipped for @pagefind/default-ui.
+      import("@pagefind/default-ui"),
+      loadUiCss(),
+    ]);
+
+    new PagefindUI({
+      element: "#search-overlay-container",
+      showSubResults: true,
+      showImages: false,
+      bundlePath: "/pagefind/",
+    });
+  }
+
+  function focusSearchInput(): void {
+    getDialog()
+      ?.querySelector<HTMLInputElement>(".pagefind-ui__search-input")
+      ?.focus();
+  }
+
+  async function openOverlay(from?: HTMLElement | null): Promise<void> {
+    const dialog = getDialog();
+    if (!dialog || dialog.open) return;
+    invoker = from ?? (document.activeElement as HTMLElement | null);
+    dialog.showModal();
+    await ensureSearchUI();
+    focusSearchInput();
+  }
+
+  function closeOverlay(): void {
+    getDialog()?.close();
+  }
+
+  const isTypingTarget = (target: EventTarget | null): boolean =>
+    target instanceof HTMLElement &&
+    Boolean(
+      target.closest("input, textarea, select, [contenteditable='true']"),
+    );
+
+  // Event delegation on document — survives Astro view transitions without
+  // any rebinding (the dialog/button elements are fresh after each swap).
+  document.addEventListener("click", (event) => {
+    const target = event.target as HTMLElement | null;
+
+    const button = target?.closest<HTMLElement>("#search-btn");
+    if (button) {
+      event.preventDefault();
+      openOverlay(button);
+      return;
+    }
+
+    // A click on the dialog element itself (not its children) is a click on
+    // the backdrop area.
+    if (target === getDialog()) closeOverlay();
+
+    // Navigating to a result closes the overlay (non-transition navigations
+    // would anyway; view transitions keep the document alive).
+    if (target?.closest(".pagefind-ui__result-link")) closeOverlay();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    const dialog = getDialog();
+    const metaK = event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey);
+
+    if (metaK) {
+      event.preventDefault();
+      if (dialog?.open) closeOverlay();
+      else openOverlay();
+      return;
+    }
+
+    if (
+      event.key === "/" &&
+      !dialog?.open &&
+      !isTypingTarget(event.target) &&
+      !event.metaKey &&
+      !event.ctrlKey &&
+      !event.altKey
+    ) {
+      event.preventDefault();
+      openOverlay();
+    }
+  });
+
+  // Native close (Esc, close(), form method=dialog) — return focus to the
+  // control that opened the overlay.
+  document.addEventListener(
+    "close",
+    (event) => {
+      if ((event.target as HTMLElement | null)?.id !== "search-overlay") return;
+      invoker?.focus();
+      invoker = null;
+    },
+    true,
+  );
+
+  // Platform-accurate shortcut hint (⌘K on Apple devices, Ctrl K elsewhere);
+  // astro:page-load fires on initial load and after every view transition.
+  document.addEventListener("astro:page-load", () => {
+    const hint = document.getElementById("search-kbd-hint");
+    if (!hint) return;
+    const isApple = /mac|iphone|ipad|ipod/i.test(navigator.platform);
+    hint.textContent = isApple ? "⌘K" : "Ctrl K";
+  });
+</script>

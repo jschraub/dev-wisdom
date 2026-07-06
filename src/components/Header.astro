@@ -108,14 +108,17 @@ const isActive = (path: string) => {
           )
         }
         <li class="col-span-1 flex items-center justify-center">
+          {/* Progressively enhanced: SearchOverlay's delegated click handler
+              opens the ⌘K dialog; without JS this stays a link to /search. */}
           <LinkButton
+            id="search-btn"
             href="/search"
             class:list={[
               "flex rounded-md p-3 sm:p-1",
               { "text-accent": isActive("/search") },
             ]}
-            title="Search"
-            aria-label="search"
+            title="Search (⌘K)"
+            aria-label="Search"
           >
             <IconSearch />
             <span class="sr-only">Search</span>

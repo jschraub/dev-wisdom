@@ -2,6 +2,7 @@
 import { Font } from "astro:assets";
 import { PUBLIC_GOOGLE_SITE_VERIFICATION } from "astro:env/client";
 import { ClientRouter } from "astro:transitions";
+import SearchOverlay from "@/components/SearchOverlay.astro";
 import { SITE } from "@/config";
 import { DARK_SCHEME_QUERY, THEME_STORAGE_KEY } from "@/scripts/themeState";
 import "@/styles/global.css";
@@ -177,6 +178,8 @@ const structuredData = {
   </head>
   <body>
     <slot />
+
+    <SearchOverlay />
 
     <!-- Load full theme logic -->
     <script src="../scripts/theme.ts"></script>
