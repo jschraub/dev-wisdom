@@ -2,6 +2,7 @@
 title: "Booleans Lie: Modeling State with Discriminated Unions in TypeScript"
 author: Jared Schraub
 pubDatetime: 2026-06-26T12:00:00Z
+modDatetime: 2026-07-10T12:00:00Z
 featured: true
 tags:
   - Functional JavaScript
@@ -39,15 +40,15 @@ const UserProfile = ({ id }: { id: string }) => {
 };
 ```
 
-Three pieces of state. Reasonable. Ships every day. But count what those three can spell between them: each is independently on or off, so there are 2 × 2 × 2 = **eight** combinations the types happily allow — and only about four of them mean anything. What is `{ isLoading: true, error: someError, user: someUser }`? Loading, but also failed, but also succeeded? What's the bottom `return null` catching — the state where it's not loading, hasn't errored, and has no user? You wrote that branch to silence a warning, not because it's a real thing.
+Three pieces of state. Reasonable. Ships every day. But count what those three can spell between them: each is independently on or off, so there are 2 × 2 × 2 = **eight** combinations the types happily allow, and only about four of them mean anything. What is `{ isLoading: true, error: someError, user: someUser }`? Loading, but also failed, but also succeeded? What's the bottom `return null` catching? The state where it's not loading, hasn't errored, and has no user. You wrote that branch to silence a warning, not because it's a real thing.
 
-And the gap isn't theoretical. The classic bug: the user refetches, you set `isLoading` back to `true`, but the old `user` is still sitting in state — so now your render hits `if (isLoading)` and flashes a spinner _over_ stale data, or worse, an earlier `error` never got cleared and shows under a fresh result. Nothing stopped you, because nothing in the types says these three values are supposed to move together. You didn't model a state. You scattered three booleans on the floor and started reading them in an order you hoped was safe.
+And the gap isn't theoretical. The classic bug: the user refetches, you set `isLoading` back to `true`, but the old `user` is still sitting in state. Now your render hits `if (isLoading)` and flashes a spinner _over_ stale data, or worse, an earlier `error` never got cleared and shows under a fresh result. Nothing stopped you, because nothing in the types says these three values are supposed to move together. You didn't model a state. You scattered three booleans on the floor and started reading them in an order you hoped was safe.
 
 Here's the thing you've actually been doing: hand-building a state machine out of loose flags and trusting that the combinations that make no sense will never happen. They happen. The fix isn't more `if`s or a careful reset in every handler. It's to stop letting the illegal combinations _exist_.
 
 ## Make the impossible states impossible
 
-Your component is never really in eight states. It's in exactly one of three: loading, failed, or loaded. So say that — as one type that is _one of_ three shapes:
+Your component is never really in eight states. It's in exactly one of three: loading, failed, or loaded. So say that, as one type that is _one of_ three shapes:
 
 ```ts
 type RemoteData<T> =
@@ -56,7 +57,7 @@ type RemoteData<T> =
   | { status: "success"; data: T };
 ```
 
-Read it as "a `RemoteData` is a loading, _or_ an error-with-an-error, _or_ a success-with-data." The `error` field exists **only** inside the error shape; `data` exists **only** inside success. There is no shape with both, and no shape with neither — so `{ status: "loading", error, data }` isn't a bug you guard against, it's a value you _cannot construct_. The eight combinations collapse to the three that were ever real, and the render reads like the state machine it always was:
+Read it as "a `RemoteData` is a loading, _or_ an error-with-an-error, _or_ a success-with-data." The `error` field exists **only** inside the error shape. `data` exists **only** inside success. There is no shape with both, and no shape with neither. `{ status: "loading", error, data }` isn't a bug you guard against, it's a value you _cannot construct_. The eight combinations collapse to the three that were ever real, and the render reads like the state machine it always was:
 
 ```ts
 switch (state.status) {
@@ -70,18 +71,18 @@ That's a **discriminated union**, and it's one of the most useful tools TypeScri
 
 ## What makes it _discriminated_
 
-A discriminated union (you'll also hear "tagged union" or "sum type") is a union of object types that all share one field — the **discriminant** — whose type is a _literal_. Here the discriminant is `status`, and its literal values — `"loading"`, `"error"`, `"success"` — are the labels TypeScript uses to tell the three shapes apart.
+A discriminated union (you'll also hear "tagged union" or "sum type") is a union of object types that all share one field, the **discriminant**, whose type is a _literal_. Here the discriminant is `status`, and its literal values (`"loading"`, `"error"`, `"success"`) are the labels TypeScript uses to tell the three shapes apart.
 
 That literal field is the whole trick, and it's what separates a discriminated union from two things that look similar but aren't:
 
-- A bare union of primitives — `type Status = "loading" | "error" | "success"` — is a union, but there's nothing to discriminate; it carries no data.
-- An _untagged_ union of objects — `{ data: T } | { error: Error }` — has data but no common label, so TypeScript can't cleanly tell which one you're holding. You end up writing `"data" in value` checks and hoping.
+- A bare union of primitives (`type Status = "loading" | "error" | "success"`) is a union, but there's nothing to discriminate. It carries no data.
+- An _untagged_ union of objects (`{ data: T } | { error: Error }`) has data but no common label, so TypeScript can't cleanly tell which one you're holding. You end up writing `"data" in value` checks and hoping.
 
 Add the shared literal field and the union gets a handle TypeScript can grab.
 
 ## The discriminant is a field you name
 
-Nothing about the name `status` is special. TypeScript will discriminate on _any_ field that's common to every member and has literal types. The community leans on a handful of conventions — `kind`, `type`, `tag`, `_tag` (the underscore comes from the fp-ts/Effect lineage) — and they're all equivalent to the compiler. Pick one and stay consistent. I avoid `type` (it collides with the word "type" in every conversation about the code) and reach for `kind`, or a domain word like `status` or `step` when one reads naturally.
+Nothing about the name `status` is special. TypeScript will discriminate on _any_ field that's common to every member and has literal types. The community leans on a handful of conventions: `kind`, `type`, `tag`, `_tag` (the underscore comes from the fp-ts/Effect lineage). They're all equivalent to the compiler. Pick one and stay consistent. I avoid `type` (it collides with the word "type" in every conversation about the code) and reach for `kind`, or a domain word like `status` or `step` when one reads naturally.
 
 ## Narrowing: the field exists where it's valid
 
@@ -115,7 +116,7 @@ const render = (state: RemoteData<User>) => {
 };
 ```
 
-By the `default`, all three cases have been narrowed away, so `state` has type `never` — the empty type — and `assertNever` accepts it. Now add a fourth shape, say `{ status: "refetching"; data: T }`. Suddenly `state` in that `default` isn't `never` anymore; it's the new variant, and `assertNever` _won't compile_. Every `switch` across the codebase that didn't add a `"refetching"` case lights up red, pointing you at exactly the spots that now have a hole. You didn't write a test for that. The type system walked you to every call site that has to change the moment you added a state.
+By the `default`, all three cases have been narrowed away, so `state` has type `never`, the empty type, and `assertNever` accepts it. Now add a fourth shape, say `{ status: "refetching"; data: T }`. Suddenly `state` in that `default` isn't `never` anymore. It's the new variant, and `assertNever` _won't compile_. Every `switch` across the codebase that didn't add a `"refetching"` case lights up red, pointing you at exactly the spots that now have a hole. You didn't write a test for that. The type system walked you to every call site that has to change the moment you added a state.
 
 ## "Why not just an enum and some optional fields?"
 
@@ -131,9 +132,9 @@ type State<T> = {
 };
 ```
 
-It looks tidier than a three-armed union. It's the boolean soup in a nicer coat. `{ status: Status.Success, data: undefined }` typechecks. So does `{ status: Status.Loading, error: anError, data: someData }`. The enum _names_ the states but never _binds_ the data to them — `error` and `data` float at the top level, optional, available (and absent) in every state — so every consumer is right back to `if (state.data)` and `state.data!`, because as far as the type knows, success might still have no data.
+It looks tidier than a three-armed union. It's the boolean soup in a nicer coat. `{ status: Status.Success, data: undefined }` typechecks. So does `{ status: Status.Loading, error: anError, data: someData }`. The enum _names_ the states but never _binds_ the data to them: `error` and `data` float at the top level, optional, available (and absent) in every state. So every consumer is right back to `if (state.data)` and `state.data!`, because as far as the type knows, success might still have no data.
 
-The discriminated union binds. `data` lives _inside_ the success shape and nowhere else, so the inconsistent combinations have no representation at all. That principle has a name worth carrying around: **make illegal states unrepresentable.** Don't write runtime checks that the data agrees with the state — build a type in which disagreeing data can't be constructed in the first place. The checks you delete are the bugs you'll never file.
+The discriminated union binds. `data` lives _inside_ the success shape and nowhere else, so the inconsistent combinations have no representation at all. That principle has a name and a pedigree: **make illegal states unrepresentable.** Yaron Minsky coined it at Jane Street, a trading firm that bet its entire codebase on typed functional programming. Don't write runtime checks that the data agrees with the state. Build a type in which disagreeing data can't be constructed in the first place. The checks you delete are the bugs you'll never file.
 
 ## It's not just for fetch state
 
@@ -147,7 +148,7 @@ type Checkout =
   | { step: "confirmed"; orderId: string };
 ```
 
-Each step carries _only_ what it has by then — there's no `address` until shipping, no `orderId` until it's confirmed — so reading a field before it exists isn't a precaution you take, it's a line that won't compile. And transitions become functions from one shape to the next:
+Each step carries _only_ what it has by then: there's no `address` until shipping, no `orderId` until it's confirmed. So reading a field before it exists isn't a precaution you take, it's a line that won't compile. And transitions become functions from one shape to the next:
 
 ```ts
 const toShipping = (
@@ -156,13 +157,13 @@ const toShipping = (
 ): Checkout => ({ step: "shipping", items: s.items, address });
 ```
 
-The transition's _type_ says which state it starts from. Trying to collect payment before there's an address isn't a bug you defend against with an `if` — it's a function call that doesn't typecheck.
+The transition's _type_ says which state it starts from. Trying to collect payment before there's an address isn't a bug you defend against with an `if`. It's a function call that doesn't typecheck.
 
-> One honest ceiling: when variants nest unions of their own, or you need to match on two discriminants at once, a plain `switch` gets unwieldy, and there's a deeper world of nested and recursive unions plus real pattern-matching beyond it. That's a bigger topic than this primer — just know the room keeps going up from the floor we're laying here.
+> One honest ceiling: when variants nest unions of their own, or you need to match on two discriminants at once, a plain `switch` gets unwieldy, and there's a deeper world of nested and recursive unions plus real pattern-matching beyond it. That's a bigger topic than this primer. Just know the room keeps going up from the floor we're laying here.
 
 ## Where it's _not_ worth it
 
-A discriminated union earns its keep when a value has several states with genuinely different shapes and some combinations are illegal. That's a lot of your state — but it isn't everything. A plain record like `{ id: string; name: string; email: string }` has no illegal states to rule out; wrapping it in a single-variant union is ceremony with no payoff. And the honest cost: variants repeat their shared fields, which gets verbose, so lift the common part into a base type and intersect it back in —
+A discriminated union earns its keep when a value has several states with genuinely different shapes and some combinations are illegal. That's a lot of your state, but it isn't everything. A plain record like `{ id: string; name: string; email: string }` has no illegal states to rule out. Wrapping it in a single-variant union is ceremony with no payoff. And the honest cost: variants repeat their shared fields, which gets verbose, so lift the common part into a base type and intersect it back in:
 
 ```ts
 type Base = { items: Item[] };
@@ -170,10 +171,10 @@ type Cart = Base & { step: "cart" };
 type Shipping = Base & { step: "shipping"; address: Address };
 ```
 
-— and reach for the union where the _states_ differ, not as a reflex on every type you declare.
+Reach for the union where the _states_ differ, not as a reflex on every type you declare.
 
 ## The one thing the compiler can't do for you
 
-The discriminant is your only _runtime_ trace of which shape you're holding. Types vanish when the code runs; the string `"success"` sitting in the `status` field is what actually survives. So a discriminated union is exactly as trustworthy as the data carrying it — which means when a value comes from somewhere you don't control (a JSON response, `localStorage`, a form submission), you have to genuinely _parse_ it into the union at the boundary, not just assert that it probably matches. That's a discipline of its own, for another day. But once a value is safely one of a fixed set of honest shapes, an entire category of "wait — how did it get into _this_ state?" bug simply stops existing.
+The discriminant is your only _runtime_ trace of which shape you're holding. Types vanish when the code runs. The string `"success"` sitting in the `status` field is what actually survives. So a discriminated union is exactly as trustworthy as the data carrying it. When a value comes from somewhere you don't control (a JSON response, `localStorage`, a form submission), you have to genuinely _parse_ it into the union at the boundary, not assert that it probably matches. That's a discipline of its own, for another day. But once a value is safely one of a fixed set of honest shapes, an entire category of "wait, how did it get into _this_ state?" bug simply stops existing.
 
 Three booleans promised you four states and quietly handed you eight. A discriminated union gives you back exactly the ones that are real — a value that can only ever be one honest thing at a time.

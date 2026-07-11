@@ -2,6 +2,7 @@
 title: "Six Functional Patterns to Stop Writing Java in JavaScript"
 author: Jared Schraub
 pubDatetime: 2026-06-25T07:00:00Z
+modDatetime: 2026-07-10T12:00:00Z
 featured: true
 tags:
   - Functional JavaScript
@@ -23,11 +24,11 @@ ogImage: ../../assets/images/six-functional-patterns-banner.png
 
 In [the last piece](/posts/your-functions-arent-functions) I made a claim that probably sounded like a word game: your functions aren't functions. You write *recipes* — ordered lists of steps that do things — in a language that quietly rewards *equations*, the kind that just declare what a result is. That was the *why*. The trouble with a why is that you finish it nodding, then sit down Monday with the same cursor blinking in the same file and no idea what to actually do differently.
 
-So this is the what-to-do. Those six tells, flipped into six moves — concrete fixes that carry the equation mindset from "nice idea" into your next pull request. Here's the part that should annoy you: you already half-know every one of them. You've called `map`. You've spread an object. You've passed a callback. You've been using these as *syntax* — little conveniences — without noticing they're the whole paradigm wearing work clothes. The shift isn't learning new tools. It's changing which tool you reach for first.
+So this is the what-to-do. Those six tells, flipped into six moves: concrete fixes that carry the equation mindset from "nice idea" into your next pull request. Here's the part that should annoy you: you already half-know every one of them. You've called `map`. You've spread an object. You've passed a callback. You've been using these as *syntax*, little conveniences, without noticing they're the whole paradigm wearing work clothes. The shift isn't learning new tools. It's changing which tool you reach for first.
 
 No libraries. No build changes. No becoming a Haskell monk. Just new defaults.
 
-Throughout this series I'll keep refactoring one thing: an **orders view**. Fetch some orders, drop the dead ones, sort them, total them, render them — a screen you've built a hundred times.
+Throughout this series I'll keep refactoring one thing: an **orders view**. Fetch some orders, drop the dead ones, sort them, total them, render them: a screen you've built a hundred times.
 
 ```ts
 type Status = "pending" | "shipped" | "delivered" | "cancelled";
@@ -43,7 +44,7 @@ type Order = {
 
 ## Describe the result, not the steps
 
-The most common Java accent in JavaScript is the hand-built loop. You want a list, so you assemble one by hand — declare an empty array, walk the input, push as you go:
+The most common Java accent in JavaScript is the hand-built loop. You want a list, so you assemble one by hand. Declare an empty array, walk the input, push as you go:
 
 ```ts
 const totals: number[] = [];
@@ -54,13 +55,13 @@ for (let i = 0; i < orders.length; i++) {
 }
 ```
 
-Every line is a step. But you didn't want steps — you wanted *the totals of the orders that aren't cancelled*. So say that:
+Every line is a step. But you didn't want steps. You wanted *the totals of the orders that aren't cancelled*. So say that:
 
 ```ts
 const totals = orders.filter(o => o.status !== "cancelled").map(o => o.total);
 ```
 
-`filter` and `map` aren't shorthand for the loop; they're the *equation* version of it. Each call names a transformation, the result reads left to right, and when the requirements grow a clause — "and only this quarter" — you add a step instead of rewiring an index and an off-by-one. The loop made you the machine. The pipeline lets you describe the answer and hand the machine work back to the machine.
+`filter` and `map` aren't shorthand for the loop. They're the *equation* version of it. Each call names a transformation, the result reads left to right, and when the requirements grow a clause, "and only this quarter," you add a step instead of rewiring an index and an off-by-one. The loop made you the machine. The pipeline lets you describe the answer and hand the machine work back to the machine.
 
 ## Compute the value, don't accumulate it
 
@@ -77,7 +78,7 @@ if (order.status === "shipped") {
 }
 ```
 
-`label` is born empty and gets assigned from somewhere — you have to read every branch to know what it ends up as, and TypeScript can't stop you from leaving a path unset. Make it a value instead:
+`label` is born empty and gets assigned from somewhere. You have to read every branch to know what it ends up as, and TypeScript can't stop you from leaving a path unset. Make it a value instead:
 
 ```ts
 const STATUS_LABEL: Record<Status, string> = {
@@ -90,7 +91,7 @@ const STATUS_LABEL: Record<Status, string> = {
 const label = STATUS_LABEL[order.status];
 ```
 
-Now `label` is `const` — defined once, where you can see it — and the `Record<Status, string>` makes the compiler *reject* the code the day you add a status and forget its label. Most `let`s are an expression you haven't finished writing; the reach for one is the recipe leaking back in. (Hold onto that exhaustiveness trick. It comes back at the end with teeth.)
+Now `label` is `const`, defined once where you can see it, and the `Record<Status, string>` makes the compiler *reject* the code the day you add a status and forget its label. Most `let`s are an expression you haven't finished writing. The reach for one is the recipe leaking back in. (Hold onto that exhaustiveness trick. It comes back at the end with teeth.)
 
 ## Make a new value, don't mutate the old one
 
@@ -102,7 +103,7 @@ const ship = (orders: Order[], index: number) => {
 };
 ```
 
-In plain code that's merely risky — anyone else holding `orders` just had the ground move under them. In React it's an actual bug, because state changes are detected by *reference*, and you just changed an object without changing the reference to it:
+In plain code that's merely risky: anyone else holding `orders` just had the ground move under them. In React it's an actual bug, because state changes are detected by *reference*, and you just changed an object without changing the reference to it:
 
 ```ts
 // the order mutates, but `orders` is the same array — React may never re-render
@@ -119,7 +120,7 @@ const shipOrder = (orders: Order[], id: string): Order[] =>
 setOrders(prev => shipOrder(prev, id));
 ```
 
-`shipOrder` is pure: same input, same output, touches nothing outside itself. React sees a brand-new array and re-renders without being asked twice; the old state is still intact for memoization, undo, and "how did we get *here*" debugging. You traded a mutation you have to trust for a value you can see.
+`shipOrder` is pure: same input, same output, touches nothing outside itself. React sees a brand-new array and re-renders without being asked twice. The old state is still intact for memoization, undo, and "how did we get *here*" debugging. You traded a mutation you have to trust for a value you can see.
 
 ## Pass functions, don't just call them
 
@@ -140,11 +141,11 @@ orders.filter(byStatus("pending"));
 orders.filter(byStatus("shipped"));
 ```
 
-`byStatus` is a function that returns a function — the inner one *closes over* the `status` you gave it. One definition replaces the whole family, and since the result is just a predicate, it drops into `filter`, `find`, `some`, anywhere a function fits. This is the move that makes the rest of functional programming stop looking weird: once functions are values you can build and pass, handing one to `filter` is no more exotic than handing it a number.
+`byStatus` is a function that returns a function: the inner one *closes over* the `status` you gave it. One definition replaces the whole family, and since the result is just a predicate, it drops into `filter`, `find`, `some`, anywhere a function fits. This is the move that makes the rest of functional programming stop looking weird: once functions are values you can build and pass, handing one to `filter` is no more exotic than handing it a number.
 
 ## Name your steps, then compose them
 
-Stack the first four moves and a pipeline can still drift into write-only — a nest you have to read inside-out:
+Stack the first four moves and a pipeline can still drift into write-only, a nest you have to read inside-out:
 
 ```ts
 const summary = sumTotals(newestFirst(activeOrders(orders)));
@@ -158,7 +159,7 @@ const newestFirst = (orders: Order[]) => [...orders].sort((a, b) => b.placedAt.l
 const sumTotals = (orders: Order[]) => orders.reduce((sum, o) => sum + o.total, 0);
 ```
 
-(Note the `[...orders]` — even `sort` mutates in place, so you copy first. Old habits hide in the standard library.) You already compose every time you chain `.filter().map()`; this is the same move with the steps pulled out and named. To read standalone functions in order instead of inside-out, a four-line `pipe` does it:
+(Note the `[...orders]`: even `sort` mutates in place, so you copy first. Old habits hide in the standard library.) You already compose every time you chain `.filter().map()`. This is the same move with the steps pulled out and named. To read standalone functions in order instead of inside-out, a four-line `pipe` does it:
 
 ```ts
 const pipe = <T>(value: T, ...fns: Array<(x: T) => T>): T =>
@@ -168,11 +169,11 @@ const prepared = pipe(orders, activeOrders, newestFirst); // Order[] in, Order[]
 const summary = sumTotals(prepared);
 ```
 
-Composition is just that: small, honest functions snapped together, the output of one becoming the input of the next. That hand-rolled `pipe` only types cleanly while the type stays the same the whole way through — the moment a step turns `Order[]` into a `number`, you want a real one. Ramda, lodash/fp, and Effect's `pipe` are the fully-typed versions, but you don't need them to start, and method chaining carries most days on its own.
+Composition is just that: small, honest functions snapped together, the output of one becoming the input of the next. That hand-rolled `pipe` only types cleanly while the type stays the same the whole way through. The moment a step turns `Order[]` into a `number`, you want a real one. Ramda, lodash/fp, and Effect's `pipe` are the fully-typed versions, but you don't need them to start, and method chaining carries most days on its own.
 
 ## Reach for a closure, not a class
 
-The deepest Java habit isn't in any one line — it's the class. If you came up in OO, your instinct for "a thing that holds state *and* behavior" is a class, with `this`, a constructor, and handlers you have to remember to bind:
+The deepest Java habit isn't in any one line. It's the class. If you came up in OO, your instinct for "a thing that holds state *and* behavior" is a class, with `this`, a constructor, and handlers you have to remember to bind:
 
 ```ts
 class OrdersView extends React.Component<Props, State> {
@@ -193,7 +194,7 @@ class OrdersView extends React.Component<Props, State> {
 }
 ```
 
-Half of that is ceremony — `this`, `super`, the bind that fails silently if you forget it — and none of it is your feature. The function version throws the ceremony out:
+Half of that is ceremony: `this`, `super`, the bind that fails silently if you forget it. None of it is your feature. The function version throws the ceremony out:
 
 ```ts
 const OrdersView = ({ initialOrders }: Props) => {
@@ -205,11 +206,11 @@ const OrdersView = ({ initialOrders }: Props) => {
 };
 ```
 
-No `this`, no constructor, no binding. `handleShip` is a plain closure over the state it needs, and the real logic — `shipOrder` — is the pure function from earlier, testable without ever mounting a component. Hooks aren't a quirky API to memorize; they're closures doing the job a class used to do. The class made state-plus-behavior *a thing you instantiate*. The closure makes it what it always was: values, and the functions that transform them.
+No `this`, no constructor, no binding. `handleShip` is a plain closure over the state it needs, and the real logic, `shipOrder`, is the pure function from earlier, testable without ever mounting a component. Hooks aren't a quirky API to memorize. They're closures doing the job a class used to do. The class made state-plus-behavior *a thing you instantiate*. The closure makes it what it always was: values, and the functions that transform them.
 
 ## Put the six together
 
-No single move earns its keep alone; the point is what they do combined. Here's the summary an orders dashboard needs, written the way you'd reach for it in Java — one loop doing four jobs at once, a running total, an array sorted in place:
+No single move earns its keep alone. The point is what they do combined. Here's the summary an orders dashboard needs, written the way you'd reach for it in Java, one loop doing four jobs at once, a running total, an array sorted in place:
 
 ```ts
 const summarize = (orders: Order[]) => {
@@ -226,7 +227,7 @@ const summarize = (orders: Order[]) => {
 };
 ```
 
-To know what that returns you have to *run* it in your head — track `total` and `active` as the loop turns. Here's the same summary built from the named steps we already have:
+To know what that returns you have to *run* it in your head: track `total` and `active` as the loop turns. Here's the same summary built from the named steps we already have:
 
 ```ts
 const summarize = (orders: Order[]) => {
@@ -235,7 +236,7 @@ const summarize = (orders: Order[]) => {
 };
 ```
 
-Every line is one of the moves. `activeOrders` and `newestFirst` describe the result instead of assembling it; each returns a new value instead of mutating one; `sumTotals` folds with a function you handed it; and the whole thing is three small pieces composed, each testable on its own. Drop it into the component and the last move falls out for free — a closure over props, no `this` in sight:
+Every line is one of the moves. `activeOrders` and `newestFirst` describe the result instead of assembling it; each returns a new value instead of mutating one; `sumTotals` folds with a function you handed it; and the whole thing is three small pieces composed, each testable on its own. Drop it into the component and the last move falls out for free, a closure over props, no `this` in sight:
 
 ```ts
 const OrdersDashboard = ({ orders }: { orders: Order[] }) => {
@@ -244,11 +245,11 @@ const OrdersDashboard = ({ orders }: { orders: Order[] }) => {
 };
 ```
 
-The imperative version wasn't *wrong*. It was a recipe — something you have to execute to understand. The functional one is closer to a statement of what the summary *is*.
+The imperative version wasn't *wrong*. It was a recipe: something you have to execute to understand. The functional one is closer to a statement of what the summary *is*.
 
 ## When a loop is just a loop
 
-Now the honesty, because a pattern you can't say no to is a religion, not a tool. None of these are laws. A `for...of` loop is perfectly clear, and in a genuinely hot path — tens of thousands of items, every frame — the intermediate arrays `map` and `filter` allocate can matter, so measure before you care. Immutability isn't free either: spreading a large object on every keystroke has a cost, which is the exact niche Immer fills. And composition curdles fast — a value piped through nine point-free helpers is as write-only as the nest you were escaping. The goal was never a purity score. It's to make the equation your *default* reach, and to step off it deliberately, out loud, when the situation pays you to.
+Now the honesty, because a pattern you can't say no to is a religion, not a tool. None of these are laws. A `for...of` loop is perfectly clear, and in a genuinely hot path (tens of thousands of items, every frame), the intermediate arrays `map` and `filter` allocate can matter, so measure before you care. Immutability isn't free either: spreading a large object on every keystroke has a cost, which is the exact niche Immer fills. And composition curdles fast: a value piped through nine point-free helpers is as write-only as the nest you were escaping. The goal was never a purity score. It's to make the equation your *default* reach, and to step off it deliberately, out loud, when the situation pays you to.
 
 ## One last move: let the type carry the failure
 
@@ -285,6 +286,6 @@ switch (result.ok) {
 }
 ```
 
-Same exhaustiveness from the label trick, now load-bearing: the type splits into success and failure, and the compiler won't let you handle one and forget the other. This is the doorway. On its own a `Result` is just a tidy return type — but make every fallible step return one and they start to *chain*: a whole pipeline of things-that-might-fail flowing through without a single `try/catch`. That's the next piece — [**Errors Are Values**](/posts/errors-are-values).
+Same exhaustiveness from the label trick, now load-bearing: the type splits into success and failure, and the compiler won't let you handle one and forget the other. This is the doorway. On its own a `Result` is just a tidy return type. But make every fallible step return one and they start to *chain*: a whole pipeline of things-that-might-fail flowing through without a single `try/catch`. That's the next piece: [**Errors Are Values**](/posts/errors-are-values).
 
-You walked in writing recipes. Six moves later your code describes results, hides nothing, passes functions around like the values they are, and lets its types tell the truth. That's not a tidier way to write Java. It's a different language — the one you were typing all along.
+You walked in writing recipes. Six moves later your code describes results, hides nothing, passes functions around like the values they are, and lets its types tell the truth. That's not a tidier way to write Java. It's a different language, the one you were typing all along.
