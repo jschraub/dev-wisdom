@@ -15,6 +15,7 @@ import Tag from "@/components/Tag.astro";
 import { SITE } from "@/config";
 import Layout from "@/layouts/Layout.astro";
 import { getPath } from "@/utils/getPath";
+import { isPublished } from "@/utils/postFilter";
 import { slugifyStr } from "@/utils/slugify";
 
 type Props = {
@@ -68,7 +69,9 @@ const layoutProps = {
 	canonicalURL,
 	ogImage,
 	scrollSmooth: true,
-	noindex: !!draft,
+	// Drafts (flagged AND scheduled — see CONTEXT.md) are reachable only by
+	// direct link, so keep them out of the index until they publish.
+	noindex: !isPublished(post.data),
 };
 
 /* ========== Prev/Next Posts ========== */
@@ -96,7 +99,7 @@ const nextPost =
   <main
     id="main-content"
     class:list={["app-layout pb-12", { "mt-8": !SITE.showBackButton }]}
-    data-pagefind-body={draft ? undefined : true}
+    data-pagefind-body={isPublished(post.data) ? true : undefined}
   >
     <h1
       transition:name={slugifyStr(title)}

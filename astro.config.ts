@@ -37,16 +37,33 @@ function walkMarkdown(dir: string, base: string): string[] {
 }
 
 /**
- * Build the set of `/posts/...` URL paths for every post marked `draft: true`.
- * Mirrors the URL construction in `src/utils/getPath.ts` so drafts can be kept
- * out of the public sitemap (their pages are still built as unlisted URLs).
+ * Build the set of `/posts/...` URL paths for every draft page — see
+ * CONTEXT.md: a post is a draft while `draft: true` is set AND while its
+ * `pubDatetime` is still in the future. Mirrors `isPublished` in
+ * `src/utils/postFilter.ts` and the URL construction in
+ * `src/utils/getPath.ts`, so drafts stay out of the public sitemap (their
+ * pages are still built at their own unlisted URLs).
+ *
+ * The `draft: true` check alone was not enough: a scheduled post does not
+ * carry that flag, so merging one submitted it to search engines ahead of its
+ * own publish time.
  */
 function getDraftUrlPaths(): Set<string> {
 	const paths = new Set<string>();
 	for (const rel of walkMarkdown(BLOG_DIR, BLOG_DIR)) {
 		const raw = readFileSync(`${BLOG_DIR}/${rel}`, "utf8");
 		const frontmatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-		if (!frontmatter || !/^draft:\s*true\s*$/m.test(frontmatter[1])) continue;
+		if (!frontmatter) continue;
+
+		const isFlaggedDraft = /^draft:\s*true\s*$/m.test(frontmatter[1]);
+		const pubMatch = frontmatter[1].match(
+			/^pubDatetime:\s*["']?(.+?)["']?\s*$/m,
+		);
+		const pubTime = pubMatch ? new Date(pubMatch[1]).getTime() : Number.NaN;
+		const isScheduled =
+			!Number.isNaN(pubTime) &&
+			Date.now() <= pubTime - SITE.scheduledPostMargin;
+		if (!isFlaggedDraft && !isScheduled) continue;
 
 		const segments = rel.split("/");
 		const fileName = (segments.pop() ?? "").replace(/\.md$/, "");
