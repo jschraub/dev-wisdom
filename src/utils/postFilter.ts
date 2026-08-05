@@ -2,15 +2,12 @@ import type { CollectionEntry } from "astro:content";
 import { SITE } from "@/config";
 
 /**
- * Is this post published? Its inverse is a *draft* — see CONTEXT.md. A post is
- * a draft while `draft: true` is set AND while its `pubDatetime` is still in
- * the future. Both states have to be treated identically by every surface that
- * enumerates posts, or a scheduled post leaks early (that is exactly how it
- * reached the archives page and the sitemap before its own publish time).
+ * A post is published once it is not a draft and its pubDatetime has passed.
+ * Both conditions hide it the same way, so use this instead of checking
+ * `data.draft` — that alone misses scheduled posts. See ADR-0004.
  *
- * This resolves at BUILD time. The site is fully prerendered, so a scheduled
- * post does not surface on its own when its timestamp passes; it surfaces at
- * the next build. `scheduledPostMargin` is the allowance for build-clock skew.
+ * Runs at build time, not per request: a scheduled post appears at the next
+ * build, not when its timestamp passes. scheduledPostMargin covers clock skew.
  */
 export const isPublished = (data: CollectionEntry<"blog">["data"]) => {
 	const isPublishTimePassed =

@@ -69,8 +69,7 @@ const layoutProps = {
 	canonicalURL,
 	ogImage,
 	scrollSmooth: true,
-	// Drafts (flagged AND scheduled — see CONTEXT.md) are reachable only by
-	// direct link, so keep them out of the index until they publish.
+	// Unpublished posts are link-only, so keep them out of search engines.
 	noindex: !isPublished(post.data),
 };
 

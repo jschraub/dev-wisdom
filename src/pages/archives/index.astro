@@ -14,9 +14,8 @@ if (!SITE.showArchives) {
 	return Astro.redirect("/404");
 }
 
-// Route through getSortedPosts (and therefore postFilter) rather than filtering
-// on `draft` alone — a scheduled post is not a draft, so a bare `!data.draft`
-// check listed it here the moment it was merged, ahead of its `pubDatetime`.
+// getSortedPosts applies postFilter. Filtering on `!data.draft` here listed
+// scheduled posts ahead of their pubDatetime.
 const posts = getSortedPosts(await getCollection("blog"));
 
 const months = [
