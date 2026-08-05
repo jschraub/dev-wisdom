@@ -3,7 +3,7 @@ title: "AI Is a Brilliant Developer With No Discipline: Why Managing Agents Is M
 author: Jared Schraub
 pubDatetime: 2026-08-05T19:00:00Z
 draft: false
-featured: false
+featured: true
 tags:
   - Engineering With AI
   - AI Coding
