@@ -1,8 +1,8 @@
 ---
 title: "AI Is a Brilliant Developer With No Discipline: Why Managing Agents Is Managing Engineers"
 author: Jared Schraub
-pubDatetime: 2026-08-07T12:00:00Z
-draft: true
+pubDatetime: 2026-08-05T19:00:00Z
+draft: false
 featured: false
 tags:
   - Engineering With AI
