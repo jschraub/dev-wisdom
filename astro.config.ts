@@ -37,16 +37,13 @@ function walkMarkdown(dir: string, base: string): string[] {
 }
 
 /**
- * Build the set of `/posts/...` URL paths for every draft page — see
- * CONTEXT.md: a post is a draft while `draft: true` is set AND while its
- * `pubDatetime` is still in the future. Mirrors `isPublished` in
- * `src/utils/postFilter.ts` and the URL construction in
- * `src/utils/getPath.ts`, so drafts stay out of the public sitemap (their
- * pages are still built at their own unlisted URLs).
+ * URL paths to keep out of the sitemap: posts flagged `draft: true`, and
+ * scheduled posts whose `pubDatetime` hasn't passed. Checking the flag alone
+ * missed scheduled posts and submitted them to search engines early.
  *
- * The `draft: true` check alone was not enough: a scheduled post does not
- * carry that flag, so merging one submitted it to search engines ahead of its
- * own publish time.
+ * Duplicates `isPublished` in `src/utils/postFilter.ts` and the URL building
+ * in `src/utils/getPath.ts` — this runs before the content collection exists,
+ * so it can't import them. Change both together. See ADR-0004.
  */
 function getDraftUrlPaths(): Set<string> {
 	const paths = new Set<string>();
