@@ -2,6 +2,7 @@
 title: "AI Is a Brilliant Developer With No Discipline: Why Managing Agents Is Managing Engineers"
 author: Jared Schraub
 pubDatetime: 2026-08-05T19:00:00Z
+modDatetime: 2026-08-17T00:00:00Z
 draft: false
 featured: true
 tags:
@@ -104,7 +105,7 @@ Everything I have built since rests on two ideas, and the second is the one peop
 
 **Context is the bottleneck, so artifacts are the shared memory.** No engineer holds a whole system in their head, and no model does either. The fix we already use for humans is that intent lives in durable artifacts, not in somebody's memory of a conversation. A `CONTEXT.md`, a spec, an architecture decision record, a ticket, a test. Chat is lossy and it evaporates. An artifact does not.
 
-That is true across contexts, and it is more true across *time*. The ticket log is how anyone answers "why is this like this?" three years from now, when everyone who was in the room has moved on. That reason has nothing to do with any model's context window, and it is why I do not treat documentation as overhead to be minimized.
+That is true across contexts, and it is more true across *time*. The ticket log is how anyone answers "why is this like this?" three years from now, when everyone who was in the room has moved on. That reason has nothing to do with any model's context window, and it is why I do not treat documentation as overhead to be minimized. It is also true across *people*, which is the half I have written about [separately](/posts/chat-history-isnt-a-handoff/): I cannot hand you my chat session, and that limitation is older than any of this tooling.
 
 **Risk sets rigor.** This is the one that gets called bureaucracy, so let me be exact about what I do, because I do not skip steps and I also do not write a design document for a typo.
 

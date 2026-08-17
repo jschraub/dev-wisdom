@@ -3,7 +3,7 @@ title: "Parse, Don't Validate: Making Bad Input Impossible in TypeScript"
 author: Jared Schraub
 pubDatetime: 2026-07-04T13:00:00Z
 modDatetime: 2026-07-10T12:00:00Z
-featured: true
+featured: false
 tags:
   - Functional JavaScript
   - TypeScript
