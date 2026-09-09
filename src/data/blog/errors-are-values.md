@@ -31,8 +31,10 @@ Here's the pain it opens onto. You've written this handler. Find an order, make 
 const handleShip = (orders: Order[], id: string) => {
   const order = orders.find(o => o.id === id);
   if (!order) return toast("That order doesn't exist.");
-  if (order.status === "cancelled") return toast("Cancelled orders can't ship.");
-  if (order.status !== "pending") return toast("That order's already on its way.");
+  if (order.status === "cancelled")
+    return toast("Cancelled orders can't ship.");
+  if (order.status !== "pending")
+    return toast("That order's already on its way.");
 
   try {
     const shipped = ship(order); // throws if there's no inventory
@@ -69,9 +71,16 @@ const err = <E>(error: E): Result<never, E> => ({ ok: false, error });
 Now rewrite the three steps so each one _returns_ its failure instead of throwing it, finding it, or hiding it. Errors, for the moment, are just strings that name what went wrong:
 
 ```ts
-type ShipError = "not_found" | "cancelled" | "already_shipped" | "no_inventory";
+type ShipError =
+  | "not_found"
+  | "cancelled"
+  | "already_shipped"
+  | "no_inventory";
 
-const findOrder = (orders: Order[], id: string): Result<Order, ShipError> => {
+const findOrder = (
+  orders: Order[],
+  id: string
+): Result<Order, ShipError> => {
   const found = orders.find(o => o.id === id);
   return found ? ok(found) : err("not_found");
 };
@@ -83,7 +92,9 @@ const ensureShippable = (order: Order): Result<Order, ShipError> => {
 };
 
 const applyShipment = (order: Order): Result<Order, ShipError> =>
-  inStock(order) ? ok({ ...order, status: "shipped" }) : err("no_inventory");
+  inStock(order)
+    ? ok({ ...order, status: "shipped" })
+    : err("no_inventory");
 ```
 
 Three honest functions. Each one's type now tells the truth: _give me this, and you'll get back either what you wanted or a reason you didn't._ But honesty alone hasn't bought us much yet. If anything we've made more work, because now every caller has to unwrap a `Result`. String three of these together by hand and you get exactly the nightmare the skeptics warn you about:
@@ -196,7 +207,9 @@ Each error still announces itself through a literal, the `kind` field, but now i
 ```ts
 switch (result.error.kind) {
   case "no_inventory":
-    return toast(`Only ${result.error.available} left — can't ship the full order.`);
+    return toast(
+      `Only ${result.error.available} left, can't ship the full order.`
+    );
   case "already_shipped":
     return toast(`Already shipped under ${result.error.trackingNumber}.`);
   // …the rest, still compiler-enforced
@@ -236,7 +249,11 @@ type OrderBase = {
 type Order =
   | (OrderBase & { status: "pending" })
   | (OrderBase & { status: "shipped"; trackingNumber: string })
-  | (OrderBase & { status: "delivered"; trackingNumber: string; deliveredAt: string })
+  | (OrderBase & {
+      status: "delivered";
+      trackingNumber: string;
+      deliveredAt: string;
+    })
   | (OrderBase & { status: "cancelled"; reason: string });
 
 type ShippedOrder = Extract<Order, { status: "shipped" }>;
@@ -270,7 +287,7 @@ const flatMapOption =
     o.some ? f(o.value) : o;
 ```
 
-Look at the body. It's `flatMap` for `Result` with the words changed. _Reach inside if there's something there; otherwise pass the emptiness through untouched._ Reach for `Result` when a missing thing comes with a reason ("not found, because…"). Reach for `Option` when it's just not there. Same machine, different cargo.
+Look at the body. It's `flatMap` for `Result` with the words changed. _Reach inside if there's something there; otherwise pass the emptiness through untouched._ Reach for `Result` when a missing thing comes with a reason ("not found, because…"). Reach for `Option` when it's just not there. Same machine, different cargo. You meet it again the first time you point deep into nested data and the thing you are pointing at [might not be there](/posts/stop-building-spread-pyramids).
 
 And here's the one you use a hundred times a day without thinking of it this way:
 

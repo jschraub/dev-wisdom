@@ -182,16 +182,27 @@ Now look underneath the view state, because [last piece](/posts/effects-are-valu
 
 ```ts
 type OrderEvent =
-  | { kind: "placed"; id: string; customer: string; total: number; at: string }
+  | {
+      kind: "placed";
+      id: string;
+      customer: string;
+      total: number;
+      at: string;
+    }
   | { kind: "shipped"; trackingNumber: string; at: string }
   | { kind: "delivered"; at: string }
   | { kind: "cancelled"; reason: string; at: string };
 
 const apply = (order: Order, event: OrderEvent): Order => {
-  if (order.status === "cancelled") return order; // tombstones don't read their mail
+  // tombstones don't read their mail
+  if (order.status === "cancelled") return order;
   switch (event.kind) {
     case "shipped":
-      return { ...order, status: "shipped", trackingNumber: event.trackingNumber };
+      return {
+        ...order,
+        status: "shipped",
+        trackingNumber: event.trackingNumber,
+      };
     case "cancelled":
       return { ...order, status: "cancelled", reason: event.reason };
     // "placed" seeds the fold; "delivered" mirrors "shipped"

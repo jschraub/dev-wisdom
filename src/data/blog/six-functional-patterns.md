@@ -58,7 +58,9 @@ for (let i = 0; i < orders.length; i++) {
 Every line is a step. But you didn't want steps. You wanted *the totals of the orders that aren't cancelled*. So say that:
 
 ```ts
-const totals = orders.filter(o => o.status !== "cancelled").map(o => o.total);
+const totals = orders
+  .filter(o => o.status !== "cancelled")
+  .map(o => o.total);
 ```
 
 `filter` and `map` aren't shorthand for the loop. They're the *equation* version of it. Each call names a transformation, the result reads left to right, and when the requirements grow a clause, "and only this quarter," you add a step instead of rewiring an index and an off-by-one. The loop made you the machine. The pipeline lets you describe the answer and hand the machine work back to the machine.
@@ -106,7 +108,8 @@ const ship = (orders: Order[], index: number) => {
 In plain code that's merely risky: anyone else holding `orders` just had the ground move under them. In React it's an actual bug, because state changes are detected by *reference*, and you just changed an object without changing the reference to it:
 
 ```ts
-// the order mutates, but `orders` is the same array — React may never re-render
+// the order mutates, but `orders` is the same array,
+// so React may never re-render
 orders[index].status = "shipped";
 setOrders(orders);
 ```
@@ -122,13 +125,17 @@ setOrders(prev => shipOrder(prev, id));
 
 `shipOrder` is pure: same input, same output, touches nothing outside itself. React sees a brand-new array and re-renders without being asked twice. The old state is still intact for memoization, undo, and "how did we get *here*" debugging. You traded a mutation you have to trust for a value you can see.
 
+(That `{ ...o, status: "shipped" }` is one level deep, which is where the spread is at its best. When the value you need to change sits five levels down, the same move turns into [a pyramid of spreads worth replacing](/posts/stop-building-spread-pyramids).)
+
 ## Pass functions, don't just call them
 
 When a function is only ever a thing you invoke, you end up copy-pasting it with one word changed:
 
 ```ts
-const pendingOrders = (orders: Order[]) => orders.filter(o => o.status === "pending");
-const shippedOrders = (orders: Order[]) => orders.filter(o => o.status === "shipped");
+const pendingOrders = (orders: Order[]) =>
+  orders.filter(o => o.status === "pending");
+const shippedOrders = (orders: Order[]) =>
+  orders.filter(o => o.status === "shipped");
 // ...and so on, once per status
 ```
 
@@ -154,9 +161,12 @@ const summary = sumTotals(newestFirst(activeOrders(orders)));
 To follow that you start in the middle and work outward. Name each transformation as its own function, and the nest becomes a sequence of steps you can read, test, and reuse on their own:
 
 ```ts
-const activeOrders = (orders: Order[]) => orders.filter(o => o.status !== "cancelled");
-const newestFirst = (orders: Order[]) => [...orders].sort((a, b) => b.placedAt.localeCompare(a.placedAt));
-const sumTotals = (orders: Order[]) => orders.reduce((sum, o) => sum + o.total, 0);
+const activeOrders = (orders: Order[]) =>
+  orders.filter(o => o.status !== "cancelled");
+const newestFirst = (orders: Order[]) =>
+  [...orders].sort((a, b) => b.placedAt.localeCompare(a.placedAt));
+const sumTotals = (orders: Order[]) =>
+  orders.reduce((sum, o) => sum + o.total, 0);
 ```
 
 (Note the `[...orders]`: even `sort` mutates in place, so you copy first. Old habits hide in the standard library.) You already compose every time you chain `.filter().map()`. This is the same move with the steps pulled out and named. To read standalone functions in order instead of inside-out, a four-line `pipe` does it:
@@ -165,7 +175,7 @@ const sumTotals = (orders: Order[]) => orders.reduce((sum, o) => sum + o.total, 
 const pipe = <T>(value: T, ...fns: Array<(x: T) => T>): T =>
   fns.reduce((acc, fn) => fn(acc), value);
 
-const prepared = pipe(orders, activeOrders, newestFirst); // Order[] in, Order[] out
+const prepared = pipe(orders, activeOrders, newestFirst); // still Order[]
 const summary = sumTotals(prepared);
 ```
 
@@ -189,7 +199,9 @@ class OrdersView extends React.Component<Props, State> {
   }
 
   render() {
-    return <OrderList orders={this.state.orders} onShip={this.handleShip} />;
+    return (
+      <OrderList orders={this.state.orders} onShip={this.handleShip} />
+    );
   }
 }
 ```
@@ -222,7 +234,7 @@ const summarize = (orders: Order[]) => {
       total += orders[i].total;
     }
   }
-  active.sort((a, b) => (a.placedAt < b.placedAt ? 1 : -1)); // sorts in place
+  active.sort((a, b) => (a.placedAt < b.placedAt ? 1 : -1)); // in place
   return { active, total, count: active.length };
 };
 ```
@@ -272,9 +284,14 @@ type Result<T, E> =
   | { ok: true; value: T }
   | { ok: false; error: E };
 
-const findOrder = (orders: Order[], id: string): Result<Order, "not_found"> => {
+const findOrder = (
+  orders: Order[],
+  id: string
+): Result<Order, "not_found"> => {
   const found = orders.find(o => o.id === id);
-  return found ? { ok: true, value: found } : { ok: false, error: "not_found" };
+  return found
+    ? { ok: true, value: found }
+    : { ok: false, error: "not_found" };
 };
 
 const result = findOrder(orders, id);

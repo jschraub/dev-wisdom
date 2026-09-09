@@ -117,7 +117,7 @@ The orders view captures that email on a form, a customer typing their contact a
 const onSubmit = (form: FormData) => {
   const email = parseEmail(form.get("email"));
   if (!email.ok) return setError(email.error);
-  sendReceipt(email.value, order); // email.value is an Email — proven, no re-check
+  sendReceipt(email.value, order); // an Email now, proven, no re-check
 };
 ```
 
@@ -160,13 +160,19 @@ const Base = z.object({
 const OrderSchema = z.discriminatedUnion("status", [
   Base.extend({ status: z.literal("pending") }),
   Base.extend({ status: z.literal("shipped"), trackingNumber: z.string() }),
-  Base.extend({ status: z.literal("delivered"), trackingNumber: z.string(), deliveredAt: z.string() }),
+  Base.extend({
+    status: z.literal("delivered"),
+    trackingNumber: z.string(),
+    deliveredAt: z.string(),
+  }),
   Base.extend({ status: z.literal("cancelled"), reason: z.string() }),
 ]);
 
-type Order = z.infer<typeof OrderSchema>; // the exact union we hand-wrote last piece
+// the exact union we hand-wrote last piece
+type Order = z.infer<typeof OrderSchema>;
 
-const parsed = OrderSchema.safeParse(raw); // Result-shaped: { success } | { success: false; error }
+// Result-shaped: { success } | { success: false; error }
+const parsed = OrderSchema.safeParse(raw);
 ```
 
 Now there's one source of truth for the shape: `z.infer` reads the type _off_ the schema and `safeParse` is the parser _from_ it, so the two can't disagree. There's a single thing to edit. **[zod](https://zod.dev/)** is what most people reach for. **[valibot](https://valibot.dev/)** spells the same idea in a fraction of the bundle when that weight matters on the client. The schema is a convenience, though, not the lesson. The lesson is the boundary: untrusted input parsed into an honest type exactly once, at the edge. A schema is just the least error-prone way to write that down.
