@@ -133,3 +133,35 @@ Scope of the exception: **the mark and its brand-surface embeddings** — the
 favicon, the OG brand row, and the header wordmark's check-as-period. Links,
 controls, and the rest of the chrome remain gold-free; the scarcity rules for
 Featured marks and the per-article `<mark>` are unchanged.
+
+## Amendment — 2026-09-08: the revisit trigger fired, and per-series accents stay rejected
+
+The rejected alternative above says per-series accent theming should not be
+resurrected "without a real second series." That condition is now met. The
+Engineering With AI cluster is live (three pieces published as of 2026-09-08),
+alongside the completed eight-piece Functional JavaScript cluster.
+
+The call was re-examined on those terms and **per-series accents are rejected
+again**, for two reasons rather than the original one:
+
+1. The original argument holds and has strengthened. Readers still arrive at
+   articles by deep link, so a per-series accent would still make the brand
+   accent the accent of the least-visited pages.
+2. Two clusters do not settle it, they start it. A second hue implies a third
+   for the next series, and a colour system indexed on an ever-growing set of
+   content clusters is a maintenance commitment with no natural end.
+
+What the second cluster actually needed was not a second accent but a
+convention for **banner artwork**, which is a separate surface from site
+chrome. That convention is proof-green: dark spruce ground, jade accent, and
+gold used only where something is proven. It is documented per-image in the
+`.prompt.md` sidecars beside each banner, with
+`brilliant-developer-no-discipline-banner.prompt.md` as the reference. Banners
+are illustrations, so this changes no token, no component, and no chrome.
+
+**Consequence for the older banner set.** The eight Functional JavaScript
+banners plus the primer predate this and use the retired blueprint-navy
+`#006cac` treatment. They stay as they are for now. Issue
+[#3](https://github.com/jschraub/dev-wisdom/issues/3) already holds the
+handoff, and a retro-fit of that set is deferred behind finishing the proof-green
+set rather than cancelled.
