@@ -2,7 +2,7 @@
 title: "State Is a Fold Over Events: Functional State in React and Beyond"
 author: Jared Schraub
 pubDatetime: 2026-07-17T13:00:00Z
-featured: true
+featured: false
 tags:
   - Functional JavaScript
   - TypeScript
@@ -115,7 +115,7 @@ The bug-#412 rule, filter changes clear the selection, is now one line that hold
 const dirty = Object.keys(state.drafts).length > 0;
 ```
 
-State that could lie, deleted instead of synchronized. The save that `drafts_saved` reports is an effect, and it stays [in the shell](/posts/effects-are-values): the shell performs the POST, then dispatches the fact it made true. (And yes, that `note_edited` case is a three-level spread to change one string. It works, and it offends me. There's a cleaner way to reach that deep; it gets a piece of its own later.)
+State that could lie, deleted instead of synchronized. The save that `drafts_saved` reports is an effect, and it stays [in the shell](/posts/effects-are-values): the shell performs the POST, then dispatches the fact it made true. (And yes, that `note_edited` case is a three-level spread to change one string. It works, and it offends me. There's a cleaner way to reach that deep, and [it gets a piece of its own](/posts/stop-building-spread-pyramids).)
 
 Now the line that pays for all of it. `update` takes a state and an event and returns a state, which is exactly the shape `reduce` eats:
 
@@ -230,6 +230,6 @@ A checkbox does not need an event log. `useState` remains the right tool for the
 
 ## Ask what happened
 
-One more thing came out of the fold, and it's the biggest. `update` and `apply` are pure. No clock, no network, no mocks: feed events, check state, the same [zero-mock tests](/posts/effects-are-values) the core earned last piece. But a pure reducer deserves better than the three examples you'll think up over coffee. A machine can generate ten thousand event sequences you'd never imagine, fold every one, and check that the laws survive: an edit followed by its undo restores the original; no sequence of facts leaves a hidden order selected; cancelled stays cancelled no matter what arrives late. You don't write those test cases. You state the law, and a tool hunts down the counterexample and shrinks it to the three-event story that breaks you. That's a piece of its own, and it's the one this whole series has been building toward: **Don't Write Tests, Write Properties**.
+One more thing came out of the fold, and it's the biggest. `update` and `apply` are pure. No clock, no network, no mocks: feed events, check state, the same [zero-mock tests](/posts/effects-are-values) the core earned last piece. But a pure reducer deserves better than the three examples you'll think up over coffee. A machine can generate ten thousand event sequences you'd never imagine, fold every one, and check that the laws survive: an edit followed by its undo restores the original; no sequence of facts leaves a hidden order selected; cancelled stays cancelled no matter what arrives late. You don't write those test cases. You state the law, and a tool hunts down the counterexample and shrinks it to the smallest story that breaks you. That's a piece of its own, and it's the one this whole series has been building toward: [**Break Your Own Code First**](/posts/break-your-own-code-first).
 
 Next time a screen ends up somewhere strange, ask the only two questions that ever mattered: what happened, and in what order. If you kept the events, the answer is one fold away. State was never the story. It's the running total of one. Keep the story.

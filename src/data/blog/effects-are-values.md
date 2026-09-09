@@ -2,7 +2,7 @@
 title: "Effects Are Values: Functional Core, Imperative Shell"
 author: Jared Schraub
 pubDatetime: 2026-07-10T13:00:00Z
-featured: true
+featured: false
 tags:
   - Functional JavaScript
   - TypeScript

@@ -2,7 +2,7 @@
 title: "Break Your Own Code First: Property-Based Testing in TypeScript"
 author: Jared Schraub
 pubDatetime: 2026-09-08T13:30:00Z
-draft: true
+featured: true
 tags:
   - Functional JavaScript
   - TypeScript
@@ -29,22 +29,35 @@ l.get(l.set(a, s)) === a
 
 Those are claims about every structure `s` and every value `a` that lens will ever see. Which raises an awkward question about the test file sitting next to them, and next to every other pure function this series has built.
 
-Here is that test file. You have written it a hundred times:
+Here is that test file. You have written this one before:
 
 ```ts
 it("selects an order", () => {
-  const state = update(initialState, { kind: "order_selected", id: "o-118" });
+  const state = update(initialState, {
+    kind: "order_selected",
+    id: "o-118",
+  });
   expect(state.selectedId).toBe("o-118");
 });
 
 it("clears the selection when the filter changes", () => {
-  const selected = update(initialState, { kind: "order_selected", id: "o-118" });
-  const filtered = update(selected, { kind: "filter_changed", status: "shipped" });
+  const selected = update(initialState, {
+    kind: "order_selected",
+    id: "o-118",
+  });
+  const filtered = update(selected, {
+    kind: "filter_changed",
+    status: "shipped",
+  });
   expect(filtered.selectedId).toBeNull();
 });
 
 it("drops all drafts on save", () => {
-  const edited = update(initialState, { kind: "note_edited", id: "o-118", note: "hi" });
+  const edited = update(initialState, {
+    kind: "note_edited",
+    id: "o-118",
+    note: "hi",
+  });
   expect(update(edited, { kind: "drafts_saved" }).drafts).toEqual({});
 });
 ```
@@ -55,7 +68,7 @@ Three tests, all green, all reasonable. And every input in them was chosen by th
 
 Example tests do not sample your input space. They sample your imagination, and your imagination has the same blind spots as your code, because it is the thing that produced it. The sequence that breaks you in production is not a sequence you failed to write a test for. It is a sequence you could not think of, which is exactly why it broke you.
 
-Look at what those three tests happen to have in common. Each one runs one or two events. Real users produce forty in a session, in orders nobody designed. The bug in [the state piece](/posts/state-is-a-fold-over-events) that started all of this arrived as a screenshot precisely because the sequence that caused it was one nobody would have written down.
+Look at what those three tests happen to have in common. Each one runs one or two events. Real users produce forty in a session, in combinations nobody planned. The bug in [the state piece](/posts/state-is-a-fold-over-events) that started all of this arrived as a screenshot precisely because the sequence that caused it was one nobody would have written down.
 
 So stop writing down sequences. Write down what has to be true about all of them.
 
@@ -90,12 +103,16 @@ const base = fc.record({
 
 const arbOrder: fc.Arbitrary<Order> = fc.oneof(
   base.map(b => ({ ...b, status: "pending" as const })),
-  fc.tuple(base, tracking).map(([b, t]) => ({ ...b, status: "shipped" as const, trackingNumber: t })),
+  fc.tuple(base, tracking).map(([b, t]) => ({
+    ...b,
+    status: "shipped" as const,
+    trackingNumber: t,
+  })),
   // delivered, cancelled…
 );
 ```
 
-`fc.assert` runs that property a hundred times by default with a different order each time, including the ones you would never type: the empty customer name, the total of zero, the tracking number that is a single backslash. Passing means something categorically different from what your three examples meant.
+`fc.assert` runs that property a hundred times by default, and as many times as you ask for, with a different order each time. That includes the ones you would never type: the empty customer name, the total of zero, the tracking number that is a single backslash. Passing means something categorically different from what your three examples meant.
 
 Notice the money. `fc.integer(...).map(cents => cents / 100)` is not decoration. Left as a raw double, this property fails on `-0`, because `JSON.stringify(-0)` is `"0"` and the round trip does not survive it. That is a true fact about your serializer and a useless one about your business, since orders are not priced in negative zero. Constraining the generator to the values your domain can actually hold is most of the skill, and you learn it by getting a counterexample you have to think about for a minute before deciding it does not count.
 
@@ -111,21 +128,22 @@ Keep the loop. Make it the test.
 it("agrees with the loop it replaced", () => {
   fc.assert(
     fc.property(arbOrders, orders => {
-      expect(sumTotals(activeOrders(orders))).toBeCloseTo(totalsTheOldWay(orders), 10);
+      const viaPipeline = sumTotals(activeOrders(orders));
+      expect(viaPipeline).toBeCloseTo(totalsTheOldWay(orders), 10);
     })
   );
 });
 ```
 
-That is a refactor with a safety net rather than a leap of faith. Run it green over a thousand generated order lists, delete the loop, and the deletion is evidence-backed. It is the single most useful thing in this piece for anyone with a legacy codebase, and it works far outside functional code. Any rewrite where the old implementation still exists can be checked against it this way, once, and then thrown away.
+That is a refactor with a safety net rather than a leap of faith. Run it green over a few hundred generated order lists, delete the loop, and the deletion is evidence-backed. It is the single most useful thing in this piece for anyone with a legacy codebase, and it works far outside functional code. Any rewrite where the old implementation still exists can be checked against it this way, once, and then thrown away.
 
 ## The law I promised and never enforced
 
 The third kind is an **invariant**: something that must be true after every operation, no matter what came before.
 
-At the end of the state piece I listed the laws a generated event log could check against that reducer. One of them was that no sequence of facts should leave a hidden order selected. It is the bug-#412 rule, the one the reducer supposedly absorbed when `filter_changed` started clearing the selection.
+At the end of the state piece I listed [the laws a generated event log could check](/posts/state-is-a-fold-over-events) against that reducer. One of them was that no sequence of facts should leave a hidden order selected. That rule arrived as a bug report, and the reducer supposedly absorbed it when `filter_changed` started clearing the selection.
 
-To state it, the reducer has to know what is on screen, so `ViewState` carries the orders and derives the visible ones:
+To state it at all, something has to know what is on screen, so `ViewState` carries the orders and a small function derives the visible ones:
 
 ```ts
 const visible = (state: ViewState): Order[] =>
@@ -142,7 +160,8 @@ it("never leaves a hidden order selected", () => {
     fc.property(arbEvents(sampleOrders.map(o => o.id)), log => {
       const state = log.reduce(update, startFrom(sampleOrders));
       if (state.selectedId === null) return;
-      expect(visible(state).some(o => o.id === state.selectedId)).toBe(true);
+      const shown = visible(state).some(o => o.id === state.selectedId);
+      expect(shown).toBe(true);
     })
   );
 });
@@ -153,7 +172,10 @@ I expected this to pass. I wrote the reducer, I published the reducer, and I tol
 ```text
 Error: Property failed after 9 tests
 { seed: -1760290322, path: "8:1:4:4:4", endOnFailure: true }
-Counterexample: [[{"kind":"filter_changed","status":"delivered"},{"kind":"order_selected","id":"o-117"}]]
+Counterexample: [[
+  {"kind":"filter_changed","status":"delivered"},
+  {"kind":"order_selected","id":"o-117"}
+]]
 Shrunk 4 time(s)
 ```
 
@@ -163,27 +185,36 @@ The rule I fixed in the state piece was that *changing the filter* must not stra
 
 ## The tool hands you the smallest story
 
-Look again at what came back. Not the sequence it found. The sequence it found was this:
+That two-event counterexample is what the tool handed back. It is not what the tool found. What it found was this:
 
 ```text
-- [{"kind":"filter_changed","status":"shipped"},{"kind":"drafts_saved"},
-   {"kind":"order_selected","id":"o-117"},{"kind":"filter_changed","status":"pending"},
-   {"kind":"filter_changed","status":"delivered"},{"kind":"order_selected","id":"o-119"},
-   {"kind":"order_selected","id":"o-120"},{"kind":"drafts_saved"}]
-- [{"kind":"filter_changed","status":"delivered"},{"kind":"order_selected","id":"o-119"},
-   {"kind":"order_selected","id":"o-120"},{"kind":"drafts_saved"}]
-- [{"kind":"filter_changed","status":"delivered"},{"kind":"order_selected","id":"o-120"},
+- [{"kind":"filter_changed","status":"shipped"},
+   {"kind":"drafts_saved"},
+   {"kind":"order_selected","id":"o-117"},
+   {"kind":"filter_changed","status":"pending"},
+   {"kind":"filter_changed","status":"delivered"},
+   {"kind":"order_selected","id":"o-119"},
+   {"kind":"order_selected","id":"o-120"},
    {"kind":"drafts_saved"}]
-- [{"kind":"filter_changed","status":"delivered"},{"kind":"order_selected","id":"o-117"},
+- [{"kind":"filter_changed","status":"delivered"},
+   {"kind":"order_selected","id":"o-119"},
+   {"kind":"order_selected","id":"o-120"},
    {"kind":"drafts_saved"}]
-- [{"kind":"filter_changed","status":"delivered"},{"kind":"order_selected","id":"o-117"}]
+- [{"kind":"filter_changed","status":"delivered"},
+   {"kind":"order_selected","id":"o-120"},
+   {"kind":"drafts_saved"}]
+- [{"kind":"filter_changed","status":"delivered"},
+   {"kind":"order_selected","id":"o-117"},
+   {"kind":"drafts_saved"}]
+- [{"kind":"filter_changed","status":"delivered"},
+   {"kind":"order_selected","id":"o-117"}]
 ```
 
 Eight events, then four, then three, then three again with a different order selected, then two. Every line still fails. That is **shrinking**, and it is the feature that makes the difference between a tool you use and a tool you abandon. A random eight-event failure is a puzzle. A two-event failure is a sentence: filter to delivered, select a pending order. You can read the bug directly off the output.
 
 <svg viewBox="0 0 760 340" role="img" aria-labelledby="shrink-t shrink-d" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;border-radius:12px;background:#0b1d2c;display:block;margin:1.5rem 0"><title id="shrink-t">Shrinking walks a random failure down to the smallest one</title><desc id="shrink-d">A wide field represents every event sequence a user could produce, with small dots scattered across it and a shaded band marking the sequences that fail. A random hit lands deep in the band at eight events. Arrows step left through failures at four, then three, then two events, each still inside the failing band, ending at a bright marker labelled the smallest sequence that still fails. The horizontal axis is labelled events in the sequence, increasing to the right.</desc><defs><pattern id="shrink-grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#16324a" stroke-width="1"/></pattern></defs><rect width="760" height="340" fill="url(#shrink-grid)" opacity="0.6"/><rect x="60" y="40" width="640" height="220" rx="10" fill="none" stroke="#1f6f9f" stroke-width="1.3"/><text x="72" y="62" fill="#8aa0b4" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11.5">every sequence your users can produce</text><path d="M92 96 C 200 84, 330 120, 430 108 C 540 96, 620 130, 690 118 L 690 214 C 610 226, 520 196, 420 208 C 320 220, 190 190, 92 202 Z" fill="#e0875a" fill-opacity="0.13" stroke="#e0875a" stroke-opacity="0.5" stroke-width="1.2"/><text x="660" y="152" text-anchor="end" fill="#e0875a" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11.5" font-style="italic">sequences that fail</text><g fill="#8aa0b4" fill-opacity="0.5"><circle cx="130" cy="74" r="2.5"/><circle cx="228" cy="86" r="2.5"/><circle cx="332" cy="70" r="2.5"/><circle cx="452" cy="82" r="2.5"/><circle cx="560" cy="72" r="2.5"/><circle cx="648" cy="88" r="2.5"/><circle cx="150" cy="238" r="2.5"/><circle cx="268" cy="246" r="2.5"/><circle cx="392" cy="236" r="2.5"/><circle cx="512" cy="248" r="2.5"/><circle cx="626" cy="238" r="2.5"/><circle cx="200" cy="160" r="2.5"/><circle cx="356" cy="176" r="2.5"/></g><circle cx="612" cy="158" r="7" fill="#e0875a"/><text x="612" y="136" text-anchor="middle" fill="#e0875a" font-family="ui-monospace,monospace" font-size="11">8 events</text><circle cx="470" cy="164" r="5.5" fill="#e0875a" fill-opacity="0.75"/><text x="470" y="142" text-anchor="middle" fill="#8aa0b4" font-family="ui-monospace,monospace" font-size="10.5">4</text><circle cx="360" cy="158" r="5.5" fill="#e0875a" fill-opacity="0.75"/><text x="360" y="136" text-anchor="middle" fill="#8aa0b4" font-family="ui-monospace,monospace" font-size="10.5">3</text><circle cx="232" cy="162" r="8" fill="#5ad19a"/><text x="232" y="136" text-anchor="middle" fill="#5ad19a" font-family="ui-monospace,monospace" font-size="11">2 events</text><g stroke="#46b0e6" stroke-width="1.6" fill="none"><path d="M604 160 L 480 163"/><path d="M462 163 L 370 159"/><path d="M351 159 L 243 161"/></g><g fill="#46b0e6"><polygon points="486,158 476,163 486,168"/><polygon points="376,154 366,159 376,164"/><polygon points="249,156 239,161 249,166"/></g><text x="232" y="196" text-anchor="middle" fill="#5ad19a" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11">the smallest sequence</text><text x="232" y="211" text-anchor="middle" fill="#5ad19a" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11">that still fails</text><line x1="60" y1="286" x2="700" y2="286" stroke="#1f6f9f" stroke-width="1.5"/><polygon points="700,280 712,286 700,292" fill="#1f6f9f"/><text x="380" y="308" text-anchor="middle" fill="#8aa0b4" font-family="ui-sans-serif,system-ui,sans-serif" font-size="11.5">events in the sequence</text><text x="380" y="330" text-anchor="middle" fill="#8aa0b4" font-family="ui-sans-serif,system-ui,sans-serif" font-size="12" font-style="italic">it finds a failure at random, then walks it down to the one you can read</text></svg>
 
-The fix is one clause, and the property tells you when you have it:
+The fix is small, and the property tells you the moment you have it right:
 
 ```ts
 case "order_selected": {
@@ -192,11 +223,11 @@ case "order_selected": {
 }
 ```
 
-There is a second fix, and it is the move the state piece already made once when it deleted `dirty`. If a selection can go stale, maybe the selected *id* is state and the selected *order* never was, so derive it at the edge and let an invisible selection resolve to nothing. Both are defensible. The property does not care which you pick. It cares that you picked.
+There is a second fix, and it is the move the state piece already made when it [deleted `dirty`](/posts/state-is-a-fold-over-events). A selection that can go stale is a sign that the selected *id* is state and the selected *order* never was. Derive the order at the edge instead, and a selection that is not visible resolves to nothing on its own. Both fixes are defensible. The property does not care which you pick. It cares that you picked.
 
 ## The law that makes replay honest
 
-One more, because it is the one holding up a feature. The state piece claimed you could rebuild any past screen by refolding a prefix of the log. That claim is an algebraic property, and it is checkable:
+One more law, and this one is holding up a feature. The state piece claimed you could [rebuild any past screen by refolding a prefix of the log](/posts/state-is-a-fold-over-events). That claim is an algebraic property, and it is checkable:
 
 ```ts
 it("folding a whole log equals folding a prefix then continuing", () => {
@@ -204,20 +235,21 @@ it("folding a whole log equals folding a prefix then continuing", () => {
     fc.property(events, fc.nat(), (log, cut) => {
       const at = cut % (log.length + 1);
       const whole = log.reduce(update, initial);
-      const inTwo = log.slice(at).reduce(update, log.slice(0, at).reduce(update, initial));
+      const upToCut = log.slice(0, at).reduce(update, initial);
+      const inTwo = log.slice(at).reduce(update, upToCut);
       expect(inTwo).toEqual(whole);
     })
   );
 });
 ```
 
-Split the log anywhere, fold the halves in sequence, land in the same place. That is time-travel debugging and undo, stated as an equation and checked against every split point of a thousand generated logs. It passes, and now it passes on purpose rather than by reputation.
+Split the log anywhere, fold the two parts in sequence, land in the same place. That is time-travel debugging and undo, stated as an equation and checked against every split point of a few hundred generated logs. It passes, and now it passes on purpose rather than by reputation.
 
 ## Properties do not replace your examples
 
 Two honest limits.
 
-The first: keep the example tests. A property says "for all inputs, this holds." An example says "this specific case, which a customer hit and which cost us a Thursday, does this specific thing." The second is documentation, and it is a regression test with a story attached. The three tests at the top of this piece are still worth having. They are just not worth *trusting* the way you were trusting them.
+The first: keep the example tests. A property says "for all inputs, this holds." An example says "this specific case, which a customer hit and which cost us a Thursday, does this specific thing." That second kind is documentation and a regression test with a story attached. The three tests at the top of this piece are still worth having. They are just not worth *trusting* the way you were trusting them.
 
 The second, and larger: naming the property is the whole skill, and it is harder than writing the test. Anyone can run a generator. Deciding that "the selected order is always visible" is a law your system must obey is design work, done in the same part of your brain that decided the reducer should exist. When you cannot think of a property, that is information, and usually it means the function does too many things to have a single law worth stating.
 

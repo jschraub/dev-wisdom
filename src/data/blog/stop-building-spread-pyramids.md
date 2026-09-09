@@ -2,7 +2,7 @@
 title: "Stop Building Spread Pyramids: Composable Focus in TypeScript"
 author: Jared Schraub
 pubDatetime: 2026-09-08T13:00:00Z
-draft: true
+featured: true
 tags:
   - Functional JavaScript
   - TypeScript
@@ -38,10 +38,12 @@ Three spreads to change one string. It is correct. It is also the only case in t
 That version is still defensible. Nobody ships three spreads and calls it a crisis, which is exactly why it survives. It gets worse on its own, six months later, when the orders view grows a settings panel, the way every internal tool eventually does:
 
 ```ts
+type Digest = "daily" | "instant";
+
 type ViewSettings = {
   notifications: {
     channels: {
-      email: { enabled: boolean; address: string; digest: "daily" | "instant" };
+      email: { enabled: boolean; address: string; digest: Digest };
       slack: { enabled: boolean; webhook: string };
     };
     quietHours: { start: number; end: number };
@@ -53,7 +55,7 @@ type ViewSettings = {
 Now a user flips the email digest from daily to instant. That one value sits five levels below the root of your state. Here is the immutable update, written the way you have written it a hundred times:
 
 ```ts
-const setDigest = (state: ViewState, digest: "daily" | "instant"): ViewState => ({
+const setDigest = (state: ViewState, digest: Digest): ViewState => ({
   ...state,
   settings: {
     ...state.settings,
@@ -92,7 +94,10 @@ type Lens<S, A> = {
   set: (a: A, s: S) => S;
 };
 
-const lens = <S, A>(get: (s: S) => A, set: (a: A, s: S) => S): Lens<S, A> => ({ get, set });
+const lens = <S, A>(
+  get: (s: S) => A,
+  set: (a: A, s: S) => S
+): Lens<S, A> => ({ get, set });
 ```
 
 `S` is the structure, `A` is the thing you are pointing at. That pair is called a **lens**, and the name is the good kind of literal: it focuses on one part of a bigger thing without losing the rest.
@@ -125,7 +130,10 @@ Read the body against the U-turn diagram above. `l.get(s)` is the walk down. `f`
 One property deep is not the problem. Five is. This is where a lens stops being a tidier setter and starts earning its keep, because a lens is a value, and two of them join into a third.
 
 ```ts
-const compose = <S, A, B>(outer: Lens<S, A>, inner: Lens<A, B>): Lens<S, B> =>
+const compose = <S, A, B>(
+  outer: Lens<S, A>,
+  inner: Lens<A, B>
+): Lens<S, B> =>
   lens(
     s => inner.get(outer.get(s)),
     (b, s) => outer.set(inner.set(b, outer.get(s)), s)
@@ -154,7 +162,7 @@ const emailLens = compose(
 And the thirteen-line pyramid becomes the line it always wanted to be:
 
 ```ts
-const setDigest = (state: ViewState, digest: "daily" | "instant") =>
+const setDigest = (state: ViewState, digest: Digest) =>
   modify(emailLens, e => ({ ...e, digest }))(state);
 ```
 
@@ -173,7 +181,8 @@ type Optional<S, A> = {
 };
 
 const at = <A>(key: string): Optional<Record<string, A>, A> => ({
-  getOption: r => (key in r ? { some: true, value: r[key] } : { some: false }),
+  getOption: r =>
+    key in r ? { some: true, value: r[key] } : { some: false },
   set: (a, r) => ({ ...r, [key]: a }),
 });
 ```
@@ -192,7 +201,10 @@ const modifyOptional =
 Compose a lens with an optional and you get an optional, because one maybe-missing step anywhere along a path makes the whole path maybe-missing. It is the same U-turn as before, carrying an `Option` on the way down:
 
 ```ts
-const composeOptional = <S, A, B>(outer: Lens<S, A>, inner: Optional<A, B>): Optional<S, B> => ({
+const composeOptional = <S, A, B>(
+  outer: Lens<S, A>,
+  inner: Optional<A, B>
+): Optional<S, B> => ({
   getOption: s => inner.getOption(outer.get(s)),
   set: (b, s) => outer.set(inner.set(b, outer.get(s)), s),
 });
@@ -201,13 +213,17 @@ const composeOptional = <S, A, B>(outer: Lens<S, A>, inner: Optional<A, B>): Opt
 Which finally settles the case that opened the piece:
 
 ```ts
-const draftOf = (id: string) => composeOptional(prop<ViewState, "drafts">("drafts"), at<Draft>(id));
+const draftOf = (id: string) =>
+  composeOptional(prop<ViewState, "drafts">("drafts"), at<Draft>(id));
 
 case "note_edited":
-  return modifyOptional(draftOf(event.id), d => ({ ...d, note: event.note }))(state);
+  return modifyOptional(
+    draftOf(event.id),
+    d => ({ ...d, note: event.note })
+  )(state);
 ```
 
-One line, and I no longer count braces. But notice what the optional just forced into the open. The original wrote `...state.drafts[event.id]` on a key that might not exist. Spreading `undefined` is legal and contributes nothing, so the object gets built from scratch and the draft is quietly *created*. Was that deliberate, or an accident nobody noticed? The pyramid never made you answer. The optional does, because "edit it if it is there" and "create it if it is not" are now two different pieces of code. If you want the version that creates, you want a lens with a default rather than an optional. Both are fine. Choosing on purpose is the point.
+One expression, and I no longer count braces. But notice what the optional just forced into the open. The original wrote `...state.drafts[event.id]` on a key that might not exist. Spreading `undefined` is legal and contributes nothing, so the object gets built from scratch and the draft is quietly *created*. Was that deliberate, or an accident nobody noticed? The pyramid never made you answer. The optional does, because "edit it if it is there" and "create it if it is not" are now two different pieces of code. If you want the version that creates, you want a lens with a default rather than an optional. Both are fine. Choosing on purpose is the point.
 
 ## Every draft at once
 
@@ -219,10 +235,14 @@ type Traversal<S, A> = {
 };
 
 const eachValue = <A>(): Traversal<Record<string, A>, A> => ({
-  modifyAll: (f, r) => Object.fromEntries(Object.entries(r).map(([k, v]) => [k, f(v)])),
+  modifyAll: (f, r) =>
+    Object.fromEntries(Object.entries(r).map(([k, v]) => [k, f(v)])),
 });
 
-const composeTraversal = <S, A, B>(outer: Lens<S, A>, inner: Traversal<A, B>): Traversal<S, B> => ({
+const composeTraversal = <S, A, B>(
+  outer: Lens<S, A>,
+  inner: Traversal<A, B>
+): Traversal<S, B> => ({
   modifyAll: (f, s) => outer.set(inner.modifyAll(f, outer.get(s)), s),
 });
 ```
@@ -230,7 +250,10 @@ const composeTraversal = <S, A, B>(outer: Lens<S, A>, inner: Traversal<A, B>): T
 There is no `get` here, because there is no single value to get. Otherwise it is the same U-turn once more: walk down, transform whatever you find, rebuild on the way back. Which makes "discard all notes" one expression:
 
 ```ts
-const everyDraft = composeTraversal(prop<ViewState, "drafts">("drafts"), eachValue<Draft>());
+const everyDraft = composeTraversal(
+  prop<ViewState, "drafts">("drafts"),
+  eachValue<Draft>()
+);
 
 const clearNotes = (state: ViewState) =>
   everyDraft.modifyAll(d => ({ ...d, note: undefined }), state);
@@ -245,7 +268,7 @@ Here is the objection I would raise if I were reading this, and it is a good one
 React developers have a tool for exactly this pain, and it is not lenses. It is [Immer](https://immerjs.github.io/immer/), and it deletes the pyramid without any of the above:
 
 ```ts
-const setDigest = (state: ViewState, digest: "daily" | "instant") =>
+const setDigest = (state: ViewState, digest: Digest) =>
   produce(state, draft => {
     draft.settings.notifications.channels.email.digest = digest;
   });
@@ -268,7 +291,8 @@ The bigger tax is inference. Read that `emailLens` again and notice every `prop`
 ```ts
 const notifications = compose(prop("settings"), prop("notifications"));
 //                                   ~~~~~~~~~~
-// error TS2345: Argument of type '"settings"' is not assignable to parameter of type 'never'.
+// error TS2345: Argument of type '"settings"' is not assignable
+// to parameter of type 'never'.
 ```
 
 TypeScript cannot infer `S` for the first `prop` from the composition it is about to take part in, so `keyof S` collapses to `never` and the key you passed is rejected. The fix is to annotate, and you annotate at every level, which means the deeper the path the more type noise you write to describe a path you already spelled out. This is the same wall [the hand-rolled `pipe`](/posts/six-functional-patterns) hit back at the start of this series, for the same reason, and it is why the real optics libraries exist. `optics-ts` and `monocle-ts` solve it with heavy type machinery and a builder syntax, and they pay for it in compile time and in error messages you will need a quiet afternoon to read. Try them on one deep path before you convert a codebase.
@@ -280,8 +304,8 @@ Every spread pyramid you have ever written was one of these, inlined and thrown 
 And they are held to laws, in the sense [the opening piece](/posts/your-functions-arent-functions) meant when it said the language wants equations rather than recipes. Two of them, for a lens:
 
 ```ts
-l.set(l.get(s), s) === s        // put back what you took, and nothing happened
-l.get(l.set(a, s)) === a        // take what you just put, and get it back
+l.set(l.get(s), s) === s     // put back what you took, nothing changed
+l.get(l.set(a, s)) === a     // take what you just put, get it back
 ```
 
 Read them as what they are. A lens is not a convention about how to write setters. It is a claim about behaviour that either holds or does not, and if it holds for two lenses, it holds for their composition. That is the whole reason `compose` is safe to stack as deep as the path goes. The equations compose, so the code composes.
@@ -290,7 +314,7 @@ Read them as what they are. A lens is not a convention about how to write setter
 
 Look at those two lines once more, because they are not documentation. They are executable claims, quantified over every `s` and every `a` you could ever pass, which means the three examples you would write by hand cover a rounding error's worth of the cases they assert.
 
-That goes well beyond lenses. The reducer from the state piece has laws too. So does the parser from the boundary piece. So does every pure function this series has built, and purity is precisely the property that makes those claims checkable by a machine instead of by you, at a scale you would never reach with hand-picked inputs. You state the law. Something else goes looking for the input that breaks it, and hands you the smallest version of the story.
+That goes well beyond lenses. The [reducer from the state piece](/posts/state-is-a-fold-over-events) has laws too. So does the [parser from the boundary piece](/posts/parse-dont-validate). So does every pure function this series has built, and purity is precisely the property that makes those claims checkable by a machine instead of by you, at a scale you would never reach with hand-picked inputs. You state the law. Something else goes looking for the input that breaks it, and hands you the smallest version of the story.
 
 That is the next piece: [**Break Your Own Code First**](/posts/break-your-own-code-first).
 
