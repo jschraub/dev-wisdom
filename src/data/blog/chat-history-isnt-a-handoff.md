@@ -199,6 +199,6 @@ None of this makes a session infinitely long, either. It makes sessions short on
 
 The same trio runs the writing side of this blog, incidentally. The [functional programming series](/tags/functional-javascript/) was planned in exactly this shape, with a roadmap, a decision record, and a handoff, and drafting sessions start from those rather than from whatever I said last week. It is not a code practice. It is a work-transfer practice.
 
-Which leaves one thing unaddressed. Everything here assumes you already know what you are trying to build, and that the only problem is carrying that knowledge across a gap. The harder failure is upstream, when the agent confidently builds the wrong thing because the two of you never actually agreed on what the right thing was. That is where the conversation earns its keep, and it is worth doing properly.
+Which leaves one thing unaddressed. Everything here assumes you already know what you are trying to build, and that the only problem is carrying that knowledge across a gap. The harder failure is upstream, when the agent confidently builds the wrong thing because the two of you never actually agreed on what the right thing was. That is where the conversation earns its keep, and it is [worth doing properly](/posts/the-wrong-thing-built-perfectly).
 
 But whatever you work out in that conversation, write it down before you clear it. The session is not the artifact. It never was.
